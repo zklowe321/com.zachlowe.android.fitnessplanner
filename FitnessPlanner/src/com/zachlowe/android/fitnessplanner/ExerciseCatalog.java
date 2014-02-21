@@ -55,10 +55,23 @@ public class ExerciseCatalog {
 	}
 	
 	public Exercise getExercise(long id) {
+		Exercise exercise = null;
+		ExerciseCursor cursor = mHelper.queryExercise(id);
+		cursor.moveToFirst();
+		// If you got a row, get an exercise
+		if (!cursor.isAfterLast())
+			exercise = cursor.getExercise();
+		cursor.close();
+		return exercise;
+	}
+	
+	/**
+	public Exercise getExercise(long id) {
 		for (Exercise e : mExercises) {
 			if (e.getId() == id)
 				return e;
 		}
 		return null;
 	}
+ 	*/
 }

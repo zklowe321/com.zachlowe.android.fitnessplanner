@@ -56,6 +56,18 @@ public class ExerciseDatabaseHelper extends SQLiteOpenHelper {
 		return new ExerciseCursor(wrapped);
 	}
 	
+	public ExerciseCursor queryExercise(long id) {
+		Cursor wrapped = getReadableDatabase().query(TABLE_EXERCISE,
+				null, // All columns
+				COLUMN_EXERCISE_ID + " = ?", // Look for an exercise ID
+				new String[]{ String.valueOf(id) }, // with this value
+				null,	// group by
+				null,	// order by
+				null,	// having
+				"1");	// limit one row
+		return new ExerciseCursor(wrapped);
+	}
+	
 	/**
 	 * A convenience class to wrap a cursor that returns rows from the exercise table.
 	 */

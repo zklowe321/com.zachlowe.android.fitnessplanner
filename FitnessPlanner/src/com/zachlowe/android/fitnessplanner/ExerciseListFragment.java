@@ -1,32 +1,40 @@
 package com.zachlowe.android.fitnessplanner;
 
 import java.util.ArrayList;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.CursorAdapter;
 import android.view.ActionMode;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
+
 public class ExerciseListFragment extends ListFragment {
 	private static final String TAG = "ExerciseListFragment";
+	private static final int REQUEST_NEW_EXERCISE = 0;
 	
 	private ArrayList<Exercise> mExercises;
 	private Callbacks mCallbacks;
+	
+	private ExerciseCursor mCursor;
 	
 	/**
 	 * Required interface for hosting activities
@@ -44,7 +52,10 @@ public class ExerciseListFragment extends ListFragment {
 		getActivity().setTitle(R.string.exercises_title);
 		mExercises = ExerciseCatalog.get(getActivity()).getExercises();
 		
-		ExerciseAdapter adapter = new ExerciseAdapter(mExercises);
+		// Query the list of exercises
+		mCursor = ExerciseCatalog.get(getActivity()).queryExercises();
+		// Create an adapter to point at this cursor
+		ExerciseCursorAdapter adapter = new ExerciseCursorAdapter(getActivity(), mCursor);
 		setListAdapter(adapter);
 		
 		setRetainInstance(true);
@@ -68,19 +79,20 @@ public class ExerciseListFragment extends ListFragment {
 				@Override
 				public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 					switch (item.getItemId()) {
-					case R.id.menu_item_delete_exercise:
-						ExerciseAdapter adapter = (ExerciseAdapter)getListAdapter();
-						ExerciseCatalog catalog = ExerciseCatalog.get(getActivity());
-						for (int i = adapter.getCount() - 1; i >= 0; i--) {
-							if (getListView().isItemChecked(i)) {
-								catalog.deleteExercise(adapter.getItem(i));
+						case R.id.menu_item_delete_exercise:
+							ExerciseCursorAdapter adapter = (ExerciseCursorAdapter)getListAdapter();
+							ExerciseCatalog catalog = ExerciseCatalog.get(getActivity());
+							for (int i = adapter.getCount() - 1; i >= 0; i--) {
+								if (getListView().isItemChecked(i)) {
+									Exercise exercise = (Exercise)adapter.getItem(i);
+									catalog.deleteExercise(exercise);
+								}
 							}
-						}
-						mode.finish();
-						adapter.notifyDataSetChanged();
-						return true;
-					default: return false;
-				}
+							mode.finish();
+							adapter.notifyDataSetChanged();
+							return true;
+						default: return false;
+					}
 				}
 
 				@Override
@@ -100,7 +112,6 @@ public class ExerciseListFragment extends ListFragment {
 				public void onItemCheckedStateChanged(ActionMode mode,int position,
 						long id, boolean checked) { }
 			});
-			
 		}
 		
 		return v;
@@ -119,7 +130,7 @@ public class ExerciseListFragment extends ListFragment {
 			case R.id.menu_item_new_exercise:
 				Exercise exercise = new Exercise();
 				ExerciseCatalog.get(getActivity()).addExercise(exercise);
-				((ExerciseAdapter)getListAdapter()).notifyDataSetChanged();
+				((ExerciseCursorAdapter)getListAdapter()).notifyDataSetChanged();
 				mCallbacks.onExerciseSelected(exercise);
 				return true;
 			default:
@@ -138,8 +149,8 @@ public class ExerciseListFragment extends ListFragment {
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
 		int position = info.position;
-		ExerciseAdapter adapter = (ExerciseAdapter)getListAdapter();
-		Exercise exercise = adapter.getItem(position);
+		ExerciseCursorAdapter adapter = (ExerciseCursorAdapter)getListAdapter();
+		Exercise exercise = (Exercise)adapter.getItem(position);
 		
 		switch (item.getItemId()) {
 			case R.id.menu_item_delete_exercise:
@@ -153,7 +164,7 @@ public class ExerciseListFragment extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// Get the Exercise from the adapter
-		Exercise e = ((ExerciseAdapter)getListAdapter()).getItem(position);
+		Exercise e = (Exercise)((ExerciseCursorAdapter)getListAdapter()).getItem(position);
 		
 		mCallbacks.onExerciseSelected(e);
 	}
@@ -176,37 +187,45 @@ public class ExerciseListFragment extends ListFragment {
 		mCallbacks = null;
 	}
 	
-	public void updateUI() {
-		((ExerciseAdapter)getListAdapter()).notifyDataSetChanged();
+	@Override
+	public void onDestroy() {
+		mCursor.close();
+		super.onDestroy();
 	}
 	
+	public void updateUI() {
+		((ExerciseCursorAdapter)getListAdapter()).notifyDataSetChanged();
+	}
 	
-	private class ExerciseAdapter extends ArrayAdapter<Exercise> {
+	private static class ExerciseCursorAdapter extends CursorAdapter {
 		
-		public ExerciseAdapter(ArrayList<Exercise> exercises) {
-			super(getActivity(), 0, exercises);
+		private ExerciseCursor mExerciseCursor;
+		
+		public ExerciseCursorAdapter(Context context, ExerciseCursor cursor) {
+			super(context, cursor, 0);
+			mExerciseCursor = cursor;
+		}
+	
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			// Use a layout inflater to get a row view
+			LayoutInflater inflater = (LayoutInflater)context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			return inflater
+					.inflate(R.layout.list_item_exercise, parent, false);
 		}
 		
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// If we weren't given a View, inflate one
-			if (convertView == null) {
-				convertView = getActivity().getLayoutInflater()
-						.inflate(R.layout.list_item_exercise, null);
-			}
-			
-			// Configure the view for this exercise
-			Exercise e = getItem(position);
+		public void bindView(View view, Context context, Cursor cursor) {
+			// Get the exercise for the current row
+			Exercise exercise = mExerciseCursor.getExercise();
 			
 			TextView titleTextView = 
-					(TextView)convertView.findViewById(R.id.exercise_list_item_titleTextView);
-			titleTextView.setText(e.getTitle());
+				(TextView)view.findViewById(R.id.exercise_list_item_titleTextView);
+			titleTextView.setText(exercise.getTitle());
 			TextView descriptionTextView = 
-					(TextView)convertView.findViewById(R.id.exercise_list_item_descriptionTextView);
-			descriptionTextView.setText(e.getDescription());
-			
-			return convertView;
+					(TextView)view.findViewById(R.id.exercise_list_item_descriptionTextView);
+			descriptionTextView.setText(exercise.getDescription());
 		}
-		
-	}	
+	}
 }
