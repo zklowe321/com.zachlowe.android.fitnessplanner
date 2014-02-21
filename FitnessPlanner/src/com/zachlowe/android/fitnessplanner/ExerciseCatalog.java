@@ -1,31 +1,33 @@
 package com.zachlowe.android.fitnessplanner;
 
 import java.util.ArrayList;
-import java.util.UUID;
-
 import android.content.Context;
-import android.util.Log;
+import android.content.SharedPreferences;
+import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
 
 public class ExerciseCatalog {
 	private static final String TAG = "ExcerciseCatalog";
+	
+	private static final String PREFS_FILE = "exercises";
+	private static final String PREF_CURRENT_EXERCISE_ID =
+			"ExerciseCatalog.currentExerciseId";
 	
 	private ArrayList<Exercise> mExercises;
 	
 	private static ExerciseCatalog sExerciseCatalog;
 	private Context mAppContext;
+	private ExerciseDatabaseHelper mHelper;
+	private SharedPreferences mPrefs;
+	private long mCurrentExerciseId;
 	
 	private ExerciseCatalog(Context appContext) {
 		mAppContext = appContext;
 		
 		mExercises = new ArrayList<Exercise>();
-		for (int i = 0; i < 10; i++) {
-			Exercise e = new Exercise();
-			e.setTitle("Exercise #" + String.valueOf(i));
-			e.setDescription("Description #" + String.valueOf(i));
-			mExercises.add(e);
-		}
 		
-		Log.d(TAG, "ExerciseCatalog constructor called");
+		mHelper = new ExerciseDatabaseHelper(mAppContext);
+		mPrefs = mAppContext.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
+		mCurrentExerciseId = mPrefs.getLong(PREF_CURRENT_EXERCISE_ID, -1);
 	}
 	
 	public static ExerciseCatalog get(Context c) {
@@ -36,7 +38,12 @@ public class ExerciseCatalog {
 	}
 	
 	public void addExercise(Exercise e) {
+		e.setId(mHelper.insertExercise(e));
 		mExercises.add(e);
+	}
+	
+	public ExerciseCursor queryExercises() {
+		return mHelper.queryExercises();
 	}
 	
 	public void deleteExercise(Exercise e) {
@@ -47,9 +54,9 @@ public class ExerciseCatalog {
 		return mExercises;
 	}
 	
-	public Exercise getExercise(UUID id) {
+	public Exercise getExercise(long id) {
 		for (Exercise e : mExercises) {
-			if (e.getId().equals(id))
+			if (e.getId() == id)
 				return e;
 		}
 		return null;

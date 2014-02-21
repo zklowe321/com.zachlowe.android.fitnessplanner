@@ -14,25 +14,10 @@ public class ExerciseListActivity extends SingleFragmentActivity
 	}
 
 	public void onExerciseSelected(Exercise exercise) {
-		//if (findViewById(R.id.fragmentContainer) == null) {
-			// Start an instance of CrimePagerActivity
+			// Start an instance of ExercisePagerActivity
 			Intent i = new Intent(this, ExercisePagerActivity.class);
 			i.putExtra(ExerciseFragment.EXTRA_EXERCISE_ID, exercise.getId());
 			startActivity(i);
-		/**} else {
-			FragmentManager fm = getSupportFragmentManager();
-			FragmentTransaction ft = fm.beginTransaction();
-			
-			Fragment currFragment = fm.findFragmentById(R.id.fragmentContainer);
-			Fragment newFragment = ExerciseFragment.newInstance(exercise.getId());
-			
-			if (currFragment != null) {
-				ft.remove(currFragment);
-			}
-			
-			ft.add(R.id.fragmentContainer, newFragment);
-			ft.commit();
-		} */
 	}
 	
 	public void onExerciseUpdated(Exercise exercise) {

@@ -1,7 +1,6 @@
 package com.zachlowe.android.fitnessplanner;
 
 import java.util.ArrayList;
-import java.util.UUID;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -57,10 +56,10 @@ public class ExercisePagerActivity extends FragmentActivity
 			public void onPageScrollStateChanged(int state) { }
 		});
 		
-		UUID exerciseId = (UUID)getIntent()
-				.getSerializableExtra(ExerciseFragment.EXTRA_EXERCISE_ID);
+		long exerciseId = (long)getIntent()
+				.getLongExtra(ExerciseFragment.EXTRA_EXERCISE_ID, -1);
 		for (int i = 0; i < mExercises.size(); i++) {
-			if (mExercises.get(i).getId().equals(exerciseId)) {
+			if (mExercises.get(i).getId() == exerciseId) {
 				mViewPager.setCurrentItem(i);
 				break;
 			}

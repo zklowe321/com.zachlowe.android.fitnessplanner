@@ -1,15 +1,13 @@
 package com.zachlowe.android.fitnessplanner;
 
-import java.util.UUID;
-
 public class Exercise {
 	
-	private UUID mId;
+	private long mId;
 	private String mTitle;
 	private String mDescription;
 	
 	public Exercise() {
-		mId = UUID.randomUUID();
+		mId = -1;
 		mTitle = null;
 	}
 
@@ -29,7 +27,11 @@ public class Exercise {
 		mDescription = description;
 	}
 	
-	public UUID getId() {
+	public long getId() {
 		return mId;
+	}
+
+	public void setId(long id) {
+		mId = id;
 	}
 }

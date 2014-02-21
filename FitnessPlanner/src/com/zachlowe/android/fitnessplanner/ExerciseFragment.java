@@ -1,7 +1,5 @@
 package com.zachlowe.android.fitnessplanner;
 
-import java.util.UUID;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
@@ -34,9 +32,9 @@ public class ExerciseFragment extends Fragment {
 		void onExerciseUpdated(Exercise exercise);
 	}
 	
-	public static ExerciseFragment newInstance(UUID exerciseId) {
+	public static ExerciseFragment newInstance(long exerciseId) {
 		Bundle args = new Bundle();
-		args.putSerializable(EXTRA_EXERCISE_ID, exerciseId);
+		args.putLong(EXTRA_EXERCISE_ID, exerciseId);
 		
 		ExerciseFragment fragment = new ExerciseFragment();
 		fragment.setArguments(args);
@@ -48,7 +46,7 @@ public class ExerciseFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		UUID exerciseId = (UUID)getArguments().getSerializable(EXTRA_EXERCISE_ID);
+		long exerciseId = (long)getArguments().getLong(EXTRA_EXERCISE_ID);
 		mExercise = ExerciseCatalog.get(getActivity()).getExercise(exerciseId);
 		
 		setHasOptionsMenu(true);
