@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -29,11 +30,8 @@ import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor
 
 public class ExerciseListFragment extends ListFragment {
 	private static final String TAG = "ExerciseListFragment";
-	private static final int REQUEST_NEW_EXERCISE = 0;
 	
-	private ArrayList<Exercise> mExercises;
 	private Callbacks mCallbacks;
-	
 	private ExerciseCursor mCursor;
 	
 	/**
@@ -50,7 +48,6 @@ public class ExerciseListFragment extends ListFragment {
 		setHasOptionsMenu(true);
 		
 		getActivity().setTitle(R.string.exercises_title);
-		mExercises = ExerciseCatalog.get(getActivity()).getExercises();
 		
 		// Query the list of exercises
 		mCursor = ExerciseCatalog.get(getActivity()).queryExercises();
@@ -128,8 +125,7 @@ public class ExerciseListFragment extends ListFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_item_new_exercise:
-				Exercise exercise = new Exercise();
-				ExerciseCatalog.get(getActivity()).addExercise(exercise);
+				Exercise exercise = ExerciseCatalog.get(getActivity()).insertExercise();
 				((ExerciseCursorAdapter)getListAdapter()).notifyDataSetChanged();
 				mCallbacks.onExerciseSelected(exercise);
 				return true;
@@ -164,9 +160,9 @@ public class ExerciseListFragment extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// Get the Exercise from the adapter
-		Exercise e = (Exercise)((ExerciseCursorAdapter)getListAdapter()).getItem(position);
+		Exercise exercise = ExerciseCatalog.get(getActivity()).getExercise(id);
 		
-		mCallbacks.onExerciseSelected(e);
+		mCallbacks.onExerciseSelected(exercise);
 	}
 	
 	@Override
@@ -194,6 +190,7 @@ public class ExerciseListFragment extends ListFragment {
 	}
 	
 	public void updateUI() {
+		Log.d(TAG, "notifyDatasetChanged called");
 		((ExerciseCursorAdapter)getListAdapter()).notifyDataSetChanged();
 	}
 	
@@ -208,6 +205,7 @@ public class ExerciseListFragment extends ListFragment {
 	
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			Log.d(TAG, "newView called in ExerciseCursorAdapter");
 			// Use a layout inflater to get a row view
 			LayoutInflater inflater = (LayoutInflater)context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -217,6 +215,7 @@ public class ExerciseListFragment extends ListFragment {
 		
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
+			Log.d(TAG, "bindView called in ExerciseCursorAdapter");
 			// Get the exercise for the current row
 			Exercise exercise = mExerciseCursor.getExercise();
 			

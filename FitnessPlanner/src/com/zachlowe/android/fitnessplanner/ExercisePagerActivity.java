@@ -1,20 +1,26 @@
 package com.zachlowe.android.fitnessplanner;
 
-import java.util.ArrayList;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+
+import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
 
 public class ExercisePagerActivity extends FragmentActivity
 	implements ExerciseFragment.Callbacks {
 	
 	private static final String TAG = "ExercisePagerActivity";
+	
+	/** A key for passing an exercise ID as a long */
+	public static final String EXTRA_EXERCISE_ID =
+			"com.zachlowe.android.fitnessplanner.exercise_id";
 
 	private ViewPager mViewPager;
-	private ArrayList<Exercise> mExercises;
+	private ExerciseCursor mCursor;
 	
 	public void onExerciseUpdated(Exercise exercise) { }
 	
@@ -25,26 +31,28 @@ public class ExercisePagerActivity extends FragmentActivity
 		mViewPager.setId(R.id.viewPager);
 		setContentView(mViewPager);
 		
-		mExercises = ExerciseCatalog.get(this).getExercises();
+		mCursor = ExerciseCatalog.get(this).queryExercises();
 		
 		FragmentManager fm = getSupportFragmentManager();
 		mViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {
 			@Override
 			public Fragment getItem(int pos) {
-				Exercise exercise = mExercises.get(pos);
+				mCursor.moveToPosition(pos);
+				Exercise exercise = mCursor.getExercise();
 				return ExerciseFragment.newInstance(exercise.getId());
 			}
 
 			@Override
 			public int getCount() {
-				return mExercises.size();
+				return mCursor.getCount();
 			}
 		});
 		
 		mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageSelected(int pos) {
-				Exercise exercise = mExercises.get(pos);
+				mCursor.moveToPosition(pos);
+				Exercise exercise = mCursor.getExercise();
 				if (exercise.getTitle() != null)
 					setTitle(exercise.getTitle());
 			}
@@ -57,11 +65,14 @@ public class ExercisePagerActivity extends FragmentActivity
 		});
 		
 		long exerciseId = (long)getIntent()
-				.getLongExtra(ExerciseFragment.EXTRA_EXERCISE_ID, -1);
-		for (int i = 0; i < mExercises.size(); i++) {
-			if (mExercises.get(i).getId() == exerciseId) {
+				.getLongExtra(EXTRA_EXERCISE_ID, -1);
+		mCursor.moveToFirst();
+		for (int i = 0; i < mCursor.getCount(); i++) {
+			if (mCursor.getExercise().getId() == exerciseId) {
 				mViewPager.setCurrentItem(i);
 				break;
+			} else {
+				mCursor.moveToNext();
 			}
 		}
 	}

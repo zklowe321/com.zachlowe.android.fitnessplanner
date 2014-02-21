@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,10 +18,10 @@ import android.widget.EditText;
 public class ExerciseFragment extends Fragment {
 	private static final String TAG = "ExerciseFragment";
 	
-	public static final String EXTRA_EXERCISE_ID =
-			"com.zachlowe.android.fitnessplanner.exercise_id";
+	public static final String ARG_EXERCISE_ID = "EXERCISE_ID";
 	
 	private Exercise mExercise;
+	private ExerciseCatalog mCatalog;
 	private EditText mTitleField;
 	private EditText mDescriptionField;
 	private Callbacks mCallbacks;
@@ -34,7 +35,7 @@ public class ExerciseFragment extends Fragment {
 	
 	public static ExerciseFragment newInstance(long exerciseId) {
 		Bundle args = new Bundle();
-		args.putLong(EXTRA_EXERCISE_ID, exerciseId);
+		args.putLong(ARG_EXERCISE_ID, exerciseId);
 		
 		ExerciseFragment fragment = new ExerciseFragment();
 		fragment.setArguments(args);
@@ -46,10 +47,22 @@ public class ExerciseFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		long exerciseId = (long)getArguments().getLong(EXTRA_EXERCISE_ID);
-		mExercise = ExerciseCatalog.get(getActivity()).getExercise(exerciseId);
+		mCatalog = ExerciseCatalog.get(getActivity());
+		
+		Bundle args = getArguments();
+		if (args != null) {
+			Log.d(TAG, "Args are not null");
+			long exerciseId = args.getLong(ARG_EXERCISE_ID, -1);
+			if (exerciseId != -1) {
+				Log.d(TAG, "exerciseId is not -1");
+				mExercise = mCatalog.getExercise(exerciseId);
+			}
+			Log.d(TAG, "exerciseId is -1");
+		}
+		Log.d(TAG, "Args are null");
 		
 		setHasOptionsMenu(true);
+		setRetainInstance(true);
 	}
 
 	@TargetApi(11)
@@ -78,8 +91,12 @@ public class ExerciseFragment extends Fragment {
 			public void onTextChanged(CharSequence c, int start, int before,
 					int count) {
 				mExercise.setTitle(c.toString());
+				
 				mCallbacks.onExerciseUpdated(mExercise);
+				Log.d(TAG, "passed onExerciseUpdated. trying activity setTitle");
+				
 				getActivity().setTitle(mExercise.getTitle());
+				Log.d(TAG, "passed activity setTitle");
 			}
 		});
 		
@@ -96,6 +113,8 @@ public class ExerciseFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence c, int start, int before,
 					int count) {
+				Log.d(TAG, "onTextChanged mDescriptionField called");
+				
 				mExercise.setDescription(c.toString());
 				mCallbacks.onExerciseUpdated(mExercise);
 			}
@@ -115,6 +134,14 @@ public class ExerciseFragment extends Fragment {
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		ExerciseCatalog.get(getActivity()).updateExercise(mExercise);
+		
+		Log.d(TAG, "updateExercise");
 	}
 	
 	@Override
