@@ -33,10 +33,4 @@ public class ExerciseListActivity extends SingleFragmentActivity
 				fm.findFragmentById(R.id.fragmentContainer);
 		listFragment.updateUI();
 	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-	}
-	
 }

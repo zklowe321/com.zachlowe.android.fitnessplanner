@@ -1,7 +1,5 @@
 package com.zachlowe.android.fitnessplanner;
 
-import java.util.ArrayList;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +7,8 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.ActionMode;
@@ -22,17 +22,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
 
-public class ExerciseListFragment extends ListFragment {
+public class ExerciseListFragment extends ListFragment
+		implements LoaderCallbacks<Cursor> {
 	private static final String TAG = "ExerciseListFragment";
 	
 	private Callbacks mCallbacks;
-	private ExerciseCursor mCursor;
 	
 	/**
 	 * Required interface for hosting activities
@@ -49,11 +48,8 @@ public class ExerciseListFragment extends ListFragment {
 		
 		getActivity().setTitle(R.string.exercises_title);
 		
-		// Query the list of exercises
-		mCursor = ExerciseCatalog.get(getActivity()).queryExercises();
-		// Create an adapter to point at this cursor
-		ExerciseCursorAdapter adapter = new ExerciseCursorAdapter(getActivity(), mCursor);
-		setListAdapter(adapter);
+		// Initialize the loader to load the list of runs
+		getLoaderManager().initLoader(0, null, this);
 		
 		setRetainInstance(true);
 	}
@@ -81,12 +77,14 @@ public class ExerciseListFragment extends ListFragment {
 							ExerciseCatalog catalog = ExerciseCatalog.get(getActivity());
 							for (int i = adapter.getCount() - 1; i >= 0; i--) {
 								if (getListView().isItemChecked(i)) {
-									Exercise exercise = (Exercise)adapter.getItem(i);
+									ExerciseCursor cursor = (ExerciseCursor)adapter.getItem(i);
+									Exercise exercise = cursor.getExercise();
 									catalog.deleteExercise(exercise);
 								}
 							}
 							mode.finish();
 							adapter.notifyDataSetChanged();
+							updateUI();
 							return true;
 						default: return false;
 					}
@@ -183,15 +181,48 @@ public class ExerciseListFragment extends ListFragment {
 		mCallbacks = null;
 	}
 	
-	@Override
-	public void onDestroy() {
-		mCursor.close();
-		super.onDestroy();
+	public void updateUI() {
+		/** Reset the loader to get any new exercise available */
+		getLoaderManager().restartLoader(0, null, this);
 	}
 	
-	public void updateUI() {
-		Log.d(TAG, "notifyDatasetChanged called");
-		((ExerciseCursorAdapter)getListAdapter()).notifyDataSetChanged();
+	/**
+	 * LoaderCallbacks interface methods
+	 */
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		Log.d(TAG, "onCreateLoader called");
+		// You only ever load the exercises, so assume this is the case
+		return new ExerciseListCursorLoader(getActivity());
+	}
+	
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		Log.d(TAG, "onLoadFinished called");
+		// Create an adapter to point at this cursor
+		ExerciseCursorAdapter adapter =
+				new ExerciseCursorAdapter(getActivity(), (ExerciseCursor)cursor);
+		setListAdapter(adapter);
+	}
+	
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		Log.d(TAG, "onLoaderReset called");
+		// Stop using the cursor (via the adapter)
+		setListAdapter(null);
+	}
+	
+	private static class ExerciseListCursorLoader extends SQLiteCursorLoader {
+		
+		public ExerciseListCursorLoader(Context context) {
+			super(context);
+		}
+		
+		@Override
+		protected Cursor loadCursor() {
+			// Query the list of exercises
+			return ExerciseCatalog.get(getContext()).queryExercises();
+		}
 	}
 	
 	private static class ExerciseCursorAdapter extends CursorAdapter {
@@ -205,7 +236,6 @@ public class ExerciseListFragment extends ListFragment {
 	
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			Log.d(TAG, "newView called in ExerciseCursorAdapter");
 			// Use a layout inflater to get a row view
 			LayoutInflater inflater = (LayoutInflater)context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -215,7 +245,6 @@ public class ExerciseListFragment extends ListFragment {
 		
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
-			Log.d(TAG, "bindView called in ExerciseCursorAdapter");
 			// Get the exercise for the current row
 			Exercise exercise = mExerciseCursor.getExercise();
 			

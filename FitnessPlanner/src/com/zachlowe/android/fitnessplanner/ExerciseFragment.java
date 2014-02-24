@@ -5,7 +5,10 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,14 +20,12 @@ import android.widget.EditText;
 
 public class ExerciseFragment extends Fragment {
 	private static final String TAG = "ExerciseFragment";
-	
-	public static final String ARG_EXERCISE_ID = "EXERCISE_ID";
+	private static final String ARG_EXERCISE_ID = "EXERCISE_ID";
+	private static final int LOAD_EXERCISE = 0;
 	
 	private Exercise mExercise;
-	private ExerciseCatalog mCatalog;
 	private EditText mTitleField;
 	private EditText mDescriptionField;
-	private Callbacks mCallbacks;
 	
 	/**
 	 * Required interface for hosting activities
@@ -47,22 +48,19 @@ public class ExerciseFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		mCatalog = ExerciseCatalog.get(getActivity());
-		
 		Bundle args = getArguments();
 		if (args != null) {
-			Log.d(TAG, "Args are not null");
 			long exerciseId = args.getLong(ARG_EXERCISE_ID, -1);
 			if (exerciseId != -1) {
-				Log.d(TAG, "exerciseId is not -1");
-				mExercise = mCatalog.getExercise(exerciseId);
+				LoaderManager lm = getLoaderManager();
+				lm.initLoader(LOAD_EXERCISE, args, new ExerciseLoaderCallbacks());
 			}
-			Log.d(TAG, "exerciseId is -1");
 		}
-		Log.d(TAG, "Args are null");
 		
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
+		
+		Log.d(TAG, "onCreate called");
 	}
 
 	@TargetApi(11)
@@ -78,7 +76,6 @@ public class ExerciseFragment extends Fragment {
 		}
 		
 		mTitleField = (EditText)v.findViewById(R.id.exercise_title);
-		mTitleField.setText(mExercise.getTitle());
 		mTitleField.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable e) { }
@@ -91,17 +88,11 @@ public class ExerciseFragment extends Fragment {
 			public void onTextChanged(CharSequence c, int start, int before,
 					int count) {
 				mExercise.setTitle(c.toString());
-				
-				mCallbacks.onExerciseUpdated(mExercise);
-				Log.d(TAG, "passed onExerciseUpdated. trying activity setTitle");
-				
 				getActivity().setTitle(mExercise.getTitle());
-				Log.d(TAG, "passed activity setTitle");
 			}
 		});
 		
 		mDescriptionField = (EditText)v.findViewById(R.id.exercise_description);
-		mDescriptionField.setText(mExercise.getDescription());
 		mDescriptionField.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable e) { }
@@ -113,12 +104,10 @@ public class ExerciseFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence c, int start, int before,
 					int count) {
-				Log.d(TAG, "onTextChanged mDescriptionField called");
-				
 				mExercise.setDescription(c.toString());
-				mCallbacks.onExerciseUpdated(mExercise);
 			}
 		});
+		updateUI();
 		
 		return v;
 	}
@@ -140,19 +129,48 @@ public class ExerciseFragment extends Fragment {
 	public void onPause() {
 		super.onPause();
 		ExerciseCatalog.get(getActivity()).updateExercise(mExercise);
+		Log.d(TAG, "onPause called");
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		updateUI();
+		Log.d(TAG, "onResume called");
+	}
+	
+	public void updateUI() {
+		if (mExercise != null && !isEmpty(mExercise)) {
+			getActivity().setTitle(mExercise.getTitle());
+			mTitleField.setText(mExercise.getTitle());
+			mDescriptionField.setText(mExercise.getDescription());
+		}
+	}
+	
+	public boolean isEmpty(Exercise exercise) {
+		return (mExercise.getTitle().equals(" ") &&
+				mExercise.getDescription().equals(" "));
+	}
+	
+	private class ExerciseLoaderCallbacks implements LoaderCallbacks<Exercise> {
+		private static final String TAG = "ExerciseLoaderCallbacks";
 		
-		Log.d(TAG, "updateExercise");
-	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		mCallbacks = (Callbacks)activity;
-	}
-	
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mCallbacks = null;
+		@Override
+		public Loader<Exercise> onCreateLoader(int id, Bundle args) {
+			Log.d(TAG, "onCreateLoader called");
+			return new ExerciseLoader(getActivity(), args.getLong(ARG_EXERCISE_ID));
+		}
+		
+		@Override
+		public void onLoadFinished(Loader<Exercise> loader, Exercise exercise) {
+			Log.d(TAG, "onLoadFinished called");
+			mExercise = exercise;
+			updateUI();
+		}
+		
+		@Override
+		public void onLoaderReset(Loader<Exercise> loader) {
+			// Do nothing
+		}
 	}	
 }

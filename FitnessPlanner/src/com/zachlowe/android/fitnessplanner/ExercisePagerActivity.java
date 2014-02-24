@@ -1,17 +1,21 @@
 package com.zachlowe.android.fitnessplanner;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
 import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
 
 public class ExercisePagerActivity extends FragmentActivity
-	implements ExerciseFragment.Callbacks {
+	implements ExerciseFragment.Callbacks, LoaderCallbacks<Cursor> {
 	
 	private static final String TAG = "ExercisePagerActivity";
 	
@@ -27,11 +31,56 @@ public class ExercisePagerActivity extends FragmentActivity
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// Initialize the loader to load the ExerciseCursor
+		getSupportLoaderManager().initLoader(0, null, this).forceLoad();
+		
 		mViewPager = new ViewPager(this);
 		mViewPager.setId(R.id.viewPager);
 		setContentView(mViewPager);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		Log.d(TAG, "onStop called");
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		Log.d(TAG, "onStart called");
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		getSupportLoaderManager().restartLoader(0, null, this);
+		Log.d(TAG, "onResume called");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.d(TAG, "onPause called");
+	}
+	
+	@Override
+	public void onRestart() {
+		super.onRestart();
+		Log.d(TAG, "onRestart called");
+	}
 		
-		mCursor = ExerciseCatalog.get(this).queryExercises();
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		Log.d(TAG, "onCreateLoader called");
+		return new ExercisePagerCursorLoader(this);
+	}
+	
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		Log.d(TAG, "onLoadFinished called");
+		mCursor = (ExerciseCursor)cursor;
 		
 		FragmentManager fm = getSupportFragmentManager();
 		mViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {
@@ -51,6 +100,7 @@ public class ExercisePagerActivity extends FragmentActivity
 		mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageSelected(int pos) {
+				Log.d(TAG, "onPageSelected called");
 				mCursor.moveToPosition(pos);
 				Exercise exercise = mCursor.getExercise();
 				if (exercise.getTitle() != null)
@@ -58,10 +108,14 @@ public class ExercisePagerActivity extends FragmentActivity
 			}
 			
 			@Override
-			public void onPageScrolled(int pos, float posOffset, int posOffsetPixels) { }
+			public void onPageScrolled(int pos, float posOffset, int posOffsetPixels) {
+				Log.d(TAG, "onPageScrolled called");
+			}
 			
 			@Override
-			public void onPageScrollStateChanged(int state) { }
+			public void onPageScrollStateChanged(int state) {
+				Log.d(TAG, "onPageScrollStateChanged called");
+			}
 		});
 		
 		long exerciseId = (long)getIntent()
@@ -74,6 +128,29 @@ public class ExercisePagerActivity extends FragmentActivity
 			} else {
 				mCursor.moveToNext();
 			}
+		}
+	}
+	
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		Log.d(TAG, "onLoaderReset called");
+		// Do nothing
+	}
+	
+	/**
+	 * Inner class to load cursor from SQLiteDatabase
+	 */
+	private static class ExercisePagerCursorLoader extends SQLiteCursorLoader {
+		
+		public ExercisePagerCursorLoader(Context context) {
+			super(context);
+		}
+		
+		@Override
+		protected Cursor loadCursor() {
+			Log.d(TAG, "loadCursor() called");
+			// Query list of exercises
+			return ExerciseCatalog.get(getContext()).queryExercises();
 		}
 	}
 }
