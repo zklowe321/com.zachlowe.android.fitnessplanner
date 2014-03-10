@@ -45,8 +45,13 @@ public class ExerciseDatabaseHelper extends SQLiteOpenHelper {
 		cv.put(COLUMN_EXERCISE_TITLE, exercise.getTitle());
 		cv.put(COLUMN_EXERCISE_DESCRIPTION, exercise.getDescription());
 		
-		return getWritableDatabase().update(TABLE_EXERCISE, cv, "id=?",
-				new String[]{Long.toString(exercise.getId())});
+		return getWritableDatabase().update(TABLE_EXERCISE, cv, "_id = ?",
+				new String[]{ String.valueOf(exercise.getId()) });
+	}
+	
+	public int deleteExercise(Exercise exercise) {
+		return getWritableDatabase().delete(TABLE_EXERCISE, "_id = ?",
+				new String[]{ String.valueOf(exercise.getId()) });
 	}
 	
 	public ExerciseCursor queryExercises() {
@@ -99,25 +104,3 @@ public class ExerciseDatabaseHelper extends SQLiteOpenHelper {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

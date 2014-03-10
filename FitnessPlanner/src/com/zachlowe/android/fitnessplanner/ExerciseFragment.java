@@ -5,7 +5,10 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,11 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-public class ExerciseFragment extends Fragment {
+public class ExerciseFragment extends Fragment
+		implements LoaderCallbacks<Exercise> {
 	private static final String TAG = "ExerciseFragment";
+	private static final String ARG_EXERCISE_ID = "EXERCISE_ID";
 	
 	public static final String EXTRA_EXERCISE_ID =
 			"com.zachlowe.android.fitnessplanner.exercise_id";
+	
 	
 	private Exercise mExercise;
 	private EditText mTitleField;
@@ -34,7 +40,7 @@ public class ExerciseFragment extends Fragment {
 	
 	public static ExerciseFragment newInstance(long exerciseId) {
 		Bundle args = new Bundle();
-		args.putLong(EXTRA_EXERCISE_ID, exerciseId);
+		args.putLong(ARG_EXERCISE_ID, exerciseId);
 		
 		ExerciseFragment fragment = new ExerciseFragment();
 		fragment.setArguments(args);
@@ -45,11 +51,16 @@ public class ExerciseFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		long exerciseId = (long)getArguments().getLong(EXTRA_EXERCISE_ID);
-		mExercise = ExerciseCatalog.get(getActivity()).getExercise(exerciseId);
-		
 		setHasOptionsMenu(true);
+		
+		Bundle args = getArguments();
+		if (args != null) {
+			long exerciseId = args.getLong(ARG_EXERCISE_ID, -1);
+			if (exerciseId != -1) {
+				LoaderManager lm = getLoaderManager();
+				lm.initLoader(0, args, this);
+			}
+		}
 	}
 
 	@TargetApi(11)
@@ -65,7 +76,6 @@ public class ExerciseFragment extends Fragment {
 		}
 		
 		mTitleField = (EditText)v.findViewById(R.id.exercise_title);
-		mTitleField.setText(mExercise.getTitle());
 		mTitleField.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable e) { }
@@ -84,7 +94,6 @@ public class ExerciseFragment extends Fragment {
 		});
 		
 		mDescriptionField = (EditText)v.findViewById(R.id.exercise_description);
-		mDescriptionField.setText(mExercise.getDescription());
 		mDescriptionField.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable e) { }
@@ -128,4 +137,39 @@ public class ExerciseFragment extends Fragment {
 		super.onDetach();
 		mCallbacks = null;
 	}	
+	
+	@Override
+	public Loader<Exercise> onCreateLoader(int id, Bundle args) {
+		return new ExerciseLoader(getActivity(), args.getLong(ARG_EXERCISE_ID));
+	}
+	
+	@Override
+	public void onLoadFinished(Loader<Exercise> loader, Exercise exercise) {
+		mExercise = exercise;
+		updateUI();
+	}
+	
+	@Override
+	public void onLoaderReset(Loader<Exercise> loader) {
+		// Do nothing
+	}
+	
+	public void updateUI() {
+		if (mExercise != null) {
+			getActivity().setTitle(mExercise.getTitle());
+			mTitleField.setText(mExercise.getTitle());
+			mDescriptionField.setText(mExercise.getDescription());
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+

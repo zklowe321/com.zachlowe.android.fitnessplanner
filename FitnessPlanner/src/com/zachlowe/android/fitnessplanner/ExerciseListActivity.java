@@ -14,8 +14,8 @@ public class ExerciseListActivity extends SingleFragmentActivity
 	}
 
 	public void onExerciseSelected(Exercise exercise) {
-			// Start an instance of ExercisePagerActivity
-			Intent i = new Intent(this, ExercisePagerActivity.class);
+			// Start an instance of ExerciseActivity
+			Intent i = new Intent(this, ExerciseActivity.class);
 			i.putExtra(ExerciseFragment.EXTRA_EXERCISE_ID, exercise.getId());
 			startActivity(i);
 	}

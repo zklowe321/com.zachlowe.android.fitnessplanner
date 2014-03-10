@@ -48,6 +48,7 @@ public class ExerciseCatalog {
 	
 	public void deleteExercise(Exercise e) {
 		mExercises.remove(e);
+		mHelper.deleteExercise(e);
 	}
 	
 	public ArrayList<Exercise> getExercises() {
@@ -64,14 +65,4 @@ public class ExerciseCatalog {
 		cursor.close();
 		return exercise;
 	}
-	
-	/**
-	public Exercise getExercise(long id) {
-		for (Exercise e : mExercises) {
-			if (e.getId() == id)
-				return e;
-		}
-		return null;
-	}
- 	*/
 }

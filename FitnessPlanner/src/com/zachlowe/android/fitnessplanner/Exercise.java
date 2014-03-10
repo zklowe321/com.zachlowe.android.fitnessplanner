@@ -9,6 +9,7 @@ public class Exercise {
 	public Exercise() {
 		mId = -1;
 		mTitle = null;
+		mDescription = null;
 	}
 
 	public String getTitle() {

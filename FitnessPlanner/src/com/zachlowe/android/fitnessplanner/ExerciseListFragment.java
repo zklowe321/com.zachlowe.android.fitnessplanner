@@ -9,6 +9,8 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.view.ActionMode;
 import android.view.ContextMenu;
@@ -21,20 +23,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
 
-public class ExerciseListFragment extends ListFragment {
+public class ExerciseListFragment extends ListFragment
+		implements LoaderCallbacks<Cursor> {
 	private static final String TAG = "ExerciseListFragment";
 	private static final int REQUEST_NEW_EXERCISE = 0;
 	
-	private ArrayList<Exercise> mExercises;
 	private Callbacks mCallbacks;
-	
-	private ExerciseCursor mCursor;
 	
 	/**
 	 * Required interface for hosting activities
@@ -50,15 +49,9 @@ public class ExerciseListFragment extends ListFragment {
 		setHasOptionsMenu(true);
 		
 		getActivity().setTitle(R.string.exercises_title);
-		mExercises = ExerciseCatalog.get(getActivity()).getExercises();
 		
-		// Query the list of exercises
-		mCursor = ExerciseCatalog.get(getActivity()).queryExercises();
-		// Create an adapter to point at this cursor
-		ExerciseCursorAdapter adapter = new ExerciseCursorAdapter(getActivity(), mCursor);
-		setListAdapter(adapter);
-		
-		setRetainInstance(true);
+		// Initialize the loader to load the list of exercises
+		getLoaderManager().initLoader(0, null, this);
 	}
 	
 	@TargetApi(11)
@@ -130,7 +123,7 @@ public class ExerciseListFragment extends ListFragment {
 			case R.id.menu_item_new_exercise:
 				Exercise exercise = new Exercise();
 				ExerciseCatalog.get(getActivity()).addExercise(exercise);
-				((ExerciseCursorAdapter)getListAdapter()).notifyDataSetChanged();
+				updateUI();
 				mCallbacks.onExerciseSelected(exercise);
 				return true;
 			default:
@@ -187,14 +180,39 @@ public class ExerciseListFragment extends ListFragment {
 		mCallbacks = null;
 	}
 	
-	@Override
-	public void onDestroy() {
-		mCursor.close();
-		super.onDestroy();
+	public void updateUI() {
+		getLoaderManager().restartLoader(0, null, this);
 	}
 	
-	public void updateUI() {
-		((ExerciseCursorAdapter)getListAdapter()).notifyDataSetChanged();
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		return new ExerciseListCursorLoader(getActivity());
+	}
+	
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		// Create an adapter to point at this cursor
+		ExerciseCursorAdapter adapter =
+				new ExerciseCursorAdapter(getActivity(), (ExerciseCursor)cursor);
+		setListAdapter(adapter);
+	}
+	
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		setListAdapter(null);
+	}
+	
+	private static class ExerciseListCursorLoader extends SQLiteCursorLoader {
+	
+		public ExerciseListCursorLoader(Context context) {
+			super(context);
+		}
+		
+		@Override
+		protected Cursor loadCursor() {
+			// Query the list of runs
+			return ExerciseCatalog.get(getContext()).queryExercises();
+		}
 	}
 	
 	private static class ExerciseCursorAdapter extends CursorAdapter {
