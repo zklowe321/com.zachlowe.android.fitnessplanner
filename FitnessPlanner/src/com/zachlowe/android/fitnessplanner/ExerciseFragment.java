@@ -141,7 +141,7 @@ public class ExerciseFragment extends Fragment {
 	
 	public void updateUI() {
 		if (mExercise != null && !isEmpty(mExercise)) {
-			getActivity().setTitle(mExercise.getTitle());
+			//getActivity().setTitle(mExercise.getTitle());
 			mTitleField.setText(mExercise.getTitle());
 			mDescriptionField.setText(mExercise.getDescription());
 		}

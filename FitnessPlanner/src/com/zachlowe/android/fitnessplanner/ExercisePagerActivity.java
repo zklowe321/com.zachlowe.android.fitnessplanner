@@ -86,9 +86,9 @@ public class ExercisePagerActivity extends FragmentActivity
 		mViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {
 			@Override
 			public Fragment getItem(int pos) {
-				mCursor.moveToPosition(pos);
-				Exercise exercise = mCursor.getExercise();
-				return ExerciseFragment.newInstance(exercise.getId());
+				Log.d(TAG, "getItem() called");
+				updateUI(pos);
+				return ExerciseFragment.newInstance(mCursor.getExercise().getId());
 			}
 
 			@Override
@@ -101,15 +101,13 @@ public class ExercisePagerActivity extends FragmentActivity
 			@Override
 			public void onPageSelected(int pos) {
 				Log.d(TAG, "onPageSelected called");
-				mCursor.moveToPosition(pos);
-				Exercise exercise = mCursor.getExercise();
-				if (exercise.getTitle() != null)
-					setTitle(exercise.getTitle());
+				updateUI(pos);
 			}
 			
 			@Override
 			public void onPageScrolled(int pos, float posOffset, int posOffsetPixels) {
 				Log.d(TAG, "onPageScrolled called");
+				updateUI(pos);
 			}
 			
 			@Override
@@ -121,6 +119,7 @@ public class ExercisePagerActivity extends FragmentActivity
 		long exerciseId = (long)getIntent()
 				.getLongExtra(EXTRA_EXERCISE_ID, -1);
 		mCursor.moveToFirst();
+		
 		for (int i = 0; i < mCursor.getCount(); i++) {
 			if (mCursor.getExercise().getId() == exerciseId) {
 				mViewPager.setCurrentItem(i);
@@ -128,13 +127,20 @@ public class ExercisePagerActivity extends FragmentActivity
 			} else {
 				mCursor.moveToNext();
 			}
-		}
+		} 
 	}
 	
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		Log.d(TAG, "onLoaderReset called");
 		// Do nothing
+	}
+	
+	public void updateUI(int pos) {
+		mCursor.moveToPosition(pos);
+		Exercise exercise = mCursor.getExercise();
+		if (exercise.getTitle() != null)
+			setTitle(exercise.getTitle());
 	}
 	
 	/**
