@@ -11,5 +11,11 @@
     <string name="exercise_title_hint">Enter exercise name</string>
     <string name="exercise_description_label">Description</string>
     <string name="exercise_description_hint">Enter exercise description</string>
+    <string name="routine_title_label">Routine</string>
+    <string name="routine_title_hint">Enter routine name</string>
+    <string name="routine_description_label">Description</string>
+    <string name="routine_description_hint">Enter routine description</string>
+    <string name="delete_routine">Delete Routine</string>
+    <string name="new_routine">New Routine</string>
 
 </resources>

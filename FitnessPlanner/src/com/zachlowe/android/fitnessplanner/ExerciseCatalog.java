@@ -57,6 +57,4 @@ public class ExerciseCatalog {
 		cursor.close();
 		return exercise;
 	}
-
-	
 }
