@@ -17,5 +17,6 @@
     <string name="routine_description_hint">Enter routine description</string>
     <string name="delete_routine">Delete Routine</string>
     <string name="new_routine">New Routine</string>
+    <string name="routines_title">Routines</string>
 
 </resources>
