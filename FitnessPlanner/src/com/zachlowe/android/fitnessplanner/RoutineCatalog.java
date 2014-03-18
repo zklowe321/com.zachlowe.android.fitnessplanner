@@ -2,7 +2,7 @@ package com.zachlowe.android.fitnessplanner;
 
 import android.content.Context;
 
-import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
+import com.zachlowe.android.fitnessplanner.RoutineDatabaseHelper.RoutineCursor;
 
 public class RoutineCatalog {
 
@@ -12,7 +12,6 @@ public class RoutineCatalog {
 	
 	private RoutineCatalog(Context appContext) {
 		mAppContext = appContext;
-		
 		mHelper = new RoutineDatabaseHelper(mAppContext);
 	}
 	
@@ -23,14 +22,14 @@ public class RoutineCatalog {
 		return sRoutineCatalog;
 	}
 	
-	// Insert a new exercise into the database
-	public Exercise insertRoutine() {
+	// Insert a new routine into the database
+	public Routine insertRoutine() {
 		Routine routine = new Routine();
 		routine.setId(mHelper.insertRoutine(routine));
 		return routine;
 	}
 	
-	// Update the values for the exercise given
+	// Update the values for the routine given
 	public int updateRoutine(Routine routine) {
 		return mHelper.updateRoutine(routine);
 	}

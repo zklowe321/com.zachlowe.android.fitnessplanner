@@ -16,7 +16,6 @@ public class ExerciseCatalog {
 	
 	private ExerciseCatalog(Context appContext) {
 		mAppContext = appContext;
-		
 		mHelper = new ExerciseDatabaseHelper(mAppContext);
 	}
 	
