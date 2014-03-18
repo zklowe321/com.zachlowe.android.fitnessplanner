@@ -4,11 +4,13 @@ public class RoutineExercise extends Exercise {
 
 	private int mSets;
 	private int mReps;
+	private long mRoutineId;
 	
-	public RoutineExercise() {
+	public RoutineExercise(long routineId) {
 		super();
 		mSets = 0;
 		mReps = 0;
+		mRoutineId = routineId;
 	}
 
 	public int getSets() {
@@ -25,5 +27,13 @@ public class RoutineExercise extends Exercise {
 
 	public void setReps(int reps) {
 		mReps = reps;
+	}
+	
+	public long getRoutineId() {
+		return mRoutineId;
+	}
+	
+	public void setRoutineId(int routineId) {
+		mRoutineId = routineId;
 	}
 }
