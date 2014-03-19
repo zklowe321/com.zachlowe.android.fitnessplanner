@@ -62,8 +62,8 @@ public class MainFragment extends Fragment {
 		mRoutineImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Intent i = new Intent(getActivity(), RoutineActivity.class);
-				// startActivity(i);
+				Intent i = new Intent(getActivity(), RoutineListActivity.class);
+				startActivity(i);
 			}
 		});
 		

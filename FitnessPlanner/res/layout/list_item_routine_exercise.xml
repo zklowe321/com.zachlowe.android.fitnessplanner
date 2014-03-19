@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" 
+    android:background="@drawable/background_activated" >
+    
+    <EditText android:id="@+id/routine_exercise_list_item_setsEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:hint="0"
+        android:layout_alignParentRight="true" />
+    
+    <TextView
+        android:id="@+id/routine_exercise_list_item_setsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/routine_exercise_list_item_setsEditText"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:text="Sets"
+        android:textStyle="bold" />
+    
+    <EditText android:id="@+id/routine_exercise_list_item_repsEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:hint="0"
+        android:layout_toLeftOf="@id/routine_exercise_list_item_setsTextView" />
+    
+    <TextView
+        android:id="@+id/routine_exercise_list_item_repsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/routine_exercise_list_item_repsEditText"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:text="Reps"
+        android:textStyle="bold" />
+    
+    <TextView
+        android:id="@+id/routine_exercise_list_item_titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/routine_exercise_list_item_repsTextView"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:text="Exercise Title"
+        android:textStyle="bold" />
+    
+</RelativeLayout>

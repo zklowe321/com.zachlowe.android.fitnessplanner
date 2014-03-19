@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-public class RoutineListActivity extends SingleFragmentActivity {
+public class RoutineListActivity extends SingleFragmentActivity
+	implements RoutineListFragment.Callbacks {
+	
 	private static final String TAG = "RoutineListActivity";
 	public static final String EXTRA_ROUTINE_ID =
 			"com.zachlowe.android.fitnessplanner.routine_id";
