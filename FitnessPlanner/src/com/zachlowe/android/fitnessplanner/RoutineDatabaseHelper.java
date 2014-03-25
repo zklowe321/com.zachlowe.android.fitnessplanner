@@ -46,7 +46,7 @@ public class RoutineDatabaseHelper extends SQLiteOpenHelper {
 	}
 	
 	// Update an existing routine
-	public int updateRoutine(Routine routine ) {
+	public int updateRoutine(Routine routine) {
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_ROUTINE_TITLE, routine.getTitle());
 		cv.put(COLUMN_ROUTINE_DESCRIPTION, routine.getDescription());

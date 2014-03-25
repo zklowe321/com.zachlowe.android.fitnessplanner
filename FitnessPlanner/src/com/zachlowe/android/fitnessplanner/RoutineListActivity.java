@@ -17,7 +17,7 @@ public class RoutineListActivity extends SingleFragmentActivity
 	}
 	
 	public void onRoutineSelected(Routine routine) {
-		// Start an instance of ExercisePagerActivity
+		// Start an instance of RoutineActivity
 		Intent i = new Intent(this, RoutineActivity.class);
 		i.putExtra(EXTRA_ROUTINE_ID, routine.getId());
 		startActivity(i);

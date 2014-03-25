@@ -18,5 +18,6 @@
     <string name="delete_routine">Delete Routine</string>
     <string name="new_routine">New Routine</string>
     <string name="routines_title">Routines</string>
+    <string name="add_exercise">Add Exercise</string>
 
 </resources>
