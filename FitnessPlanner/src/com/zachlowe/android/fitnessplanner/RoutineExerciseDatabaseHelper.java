@@ -3,11 +3,10 @@ package com.zachlowe.android.fitnessplanner;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
 
 public class RoutineExerciseDatabaseHelper extends SQLiteOpenHelper {
 
@@ -80,11 +79,11 @@ public class RoutineExerciseDatabaseHelper extends SQLiteOpenHelper {
 		return new RoutineExerciseCursor(wrapped);
 	}
 	
-	public RoutineExerciseCursor queryRoutineExercise(long r_id, long e_id) {
+	public RoutineExerciseCursor queryRoutineExercise(long _id) {
 		Cursor wrapped = getReadableDatabase().query(TABLE_ROUTINE_EXERCISE,
 				null, // All columns
-				"r_id = ? and e_id = ?", // Look for a routine and exercise ID
-				new String[]{ String.valueOf(r_id), String.valueOf(e_id) }, // with this value
+				"_id = ?", // Look for a routine and exercise ID
+				new String[]{ String.valueOf(_id) }, // with this value
 				null,	// group by
 				null,	// order by
 				null,	// having
@@ -95,7 +94,7 @@ public class RoutineExerciseDatabaseHelper extends SQLiteOpenHelper {
 	/**
 	 * A convenience class to wrap a cursor that returns rows from the routine_exercise table.
 	 */
-	public static class RoutineExerciseCursor extends ExerciseCursor {
+	public static class RoutineExerciseCursor extends CursorWrapper {
 		
 		public RoutineExerciseCursor(Cursor c) {
 			super(c);
@@ -106,16 +105,16 @@ public class RoutineExerciseDatabaseHelper extends SQLiteOpenHelper {
 		 * or null if the row is invalid
 		 */
 		public RoutineExercise getRoutineExercise() {
-			Exercise exercise = getExercise();
-			
 			if (isBeforeFirst() || isAfterLast())
 				return null;
 			
-			RoutineExercise routineExercise = new RoutineExercise( getLong(getColumnIndex(COLUMN_ROUTINE_ID)), exercise.getId() );
-			routineExercise.setId( exercise.getId());
+			RoutineExercise routineExercise = new RoutineExercise( 
+					getLong(getColumnIndex(COLUMN_ROUTINE_ID)), 
+					getLong(getColumnIndex(COLUMN_EXERCISE_ID)) );
+			//routineExercise.setId( exercise.getId());
 			
-			routineExercise.setTitle( exercise.getTitle() );
-			routineExercise.setDescription( exercise.getDescription() );
+			//routineExercise.setTitle( exercise.getTitle() );
+			//routineExercise.setDescription( exercise.getDescription() );
 			
 			int sets = getInt(getColumnIndex(COLUMN_SETS));
 			routineExercise.setSets(sets);

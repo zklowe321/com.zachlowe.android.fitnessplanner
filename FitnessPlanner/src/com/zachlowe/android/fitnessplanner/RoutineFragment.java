@@ -143,31 +143,12 @@ public class RoutineFragment extends ListFragment
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_item_new_routine_exercise:
-				//RoutineExercise routineExercise = RoutineExerciseCatalog.get(getActivity()).insertRoutineExercise();
-				//((RoutineExerciseCursorAdapter)getListAdapter()).notifyDataSetChanged();
 				mCallbacks.onAddExerciseSelected( getArguments().getLong(ARG_ROUTINE_ID) );
-				
-				//Intent i = new Intent(getActivity(), ExerciseListActivity.class);
-				//i.putExtra(EXTRA_ADD_EXERCISE, REQUEST_EXERCISE);
-				//startActivityForResult(i, REQUEST_EXERCISE);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
-	
-	/**
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQUEST_EXERCISE) {
-			long exerciseId = data.getLongExtra(EXTRA_EXERCISE_ID, -1);
-			long routineId = getArguments().getLong(ARG_ROUTINE_ID);
-			
-			RoutineExercise routineExercise = RoutineExerciseCatalog.get(getActivity())
-					.insertRoutineExercise(routineId, exerciseId);
-			updateUI();
-		}
-	}*/
 	
 	// Inflate context menu for Froyo and Gingerbread
 	@Override
@@ -192,14 +173,13 @@ public class RoutineFragment extends ListFragment
 		return super.onContextItemSelected(item);
 	}
 	
-	/**
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// Get the Routine from the adapter
 		RoutineExercise routineExercise = RoutineExerciseCatalog.get(getActivity()).getRoutineExercise(id);
 		
 		mCallbacks.onRoutineExerciseSelected(routineExercise);
-	}*/
+	}
 	
 	@Override
 	public void onResume() {
@@ -292,11 +272,11 @@ public class RoutineFragment extends ListFragment
 			
 			EditText setsEditText =
 					(EditText)view.findViewById(R.id.routine_exercise_list_item_setsEditText);
-			setsEditText.setText(routineExercise.getSets());
+			setsEditText.setText( String.valueOf(routineExercise.getSets()) );
 			
 			EditText repsEditText =
 					(EditText)view.findViewById(R.id.routine_exercise_list_item_repsEditText);
-			repsEditText.setText(routineExercise.getReps());
+			repsEditText.setText( String.valueOf(routineExercise.getReps()) );
 			
 		}
 	}

@@ -4,29 +4,12 @@
     android:layout_height="wrap_content" 
     android:background="@drawable/background_activated" >
     
-    <EditText android:id="@+id/routine_exercise_list_item_setsEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="4dp"
-        android:hint="0"
-        android:layout_alignParentRight="true" />
-    
-    <TextView
-        android:id="@+id/routine_exercise_list_item_setsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/routine_exercise_list_item_setsEditText"
-        android:gravity="center_vertical"
-        android:padding="4dp"
-        android:text="Sets"
-        android:textStyle="bold" />
-    
     <EditText android:id="@+id/routine_exercise_list_item_repsEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="4dp"
         android:hint="0"
-        android:layout_toLeftOf="@id/routine_exercise_list_item_setsTextView" />
+        android:layout_alignParentRight="true" />
     
     <TextView
         android:id="@+id/routine_exercise_list_item_repsTextView"
@@ -36,6 +19,23 @@
         android:gravity="center_vertical"
         android:padding="4dp"
         android:text="Reps"
+        android:textStyle="bold" />
+    
+    <EditText android:id="@+id/routine_exercise_list_item_setsEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:hint="0"
+        android:layout_toLeftOf="@id/routine_exercise_list_item_repsTextView" />
+    
+    <TextView
+        android:id="@+id/routine_exercise_list_item_setsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/routine_exercise_list_item_setsEditText"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:text="Sets"
         android:textStyle="bold" />
     
     <TextView

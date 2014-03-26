@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" 
+        android:paddingLeft="16dp" 
+        android:paddingRight="16dp" 
+        android:layout_weight="1" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/exercise_title_label" 
+            style="?android:listSeparatorTextViewStyle" />
+
+        <TextView
+            android:id="@+id/exercise_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" 
+        android:paddingLeft="16dp" 
+        android:paddingRight="16dp" 
+        android:layout_weight="4" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/exercise_description_label" 
+            style="?android:listSeparatorTextViewStyle" />
+
+        <TextView
+            android:id="@+id/exercise_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        android:orientation="horizontal"
+        android:background="@drawable/background_activated" >
+        
+        <TextView
+        	android:id="@+id/routine_exercise_list_item_setsTextView"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:gravity="center_vertical"
+        	android:padding="4dp"
+        	android:text="Sets"
+        	android:textStyle="bold" />
+        
+        <EditText android:id="@+id/routine_exercise_list_item_setsEditText"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:padding="4dp"
+        	android:hint="0" />
+        
+        <TextView
+        	android:id="@+id/routine_exercise_list_item_repsTextView"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:gravity="center_vertical"
+        	android:padding="4dp"
+        	android:text="Reps"
+        	android:textStyle="bold" />
+        
+        <EditText android:id="@+id/routine_exercise_list_item_repsEditText"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:padding="4dp"
+        	android:hint="0" />
+        
+    </LinearLayout>
+
+</LinearLayout>

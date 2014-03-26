@@ -53,7 +53,10 @@ public class RoutineActivity extends SingleFragmentActivity
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_EXERCISE) {
-			Log.d(TAG, "exerciseId: " + data.getLongExtra(ExerciseListActivity.EXTRA_EXERCISE_ID, -1));
+			long exerciseId = data.getLongExtra(
+					ExerciseListActivity.EXTRA_EXERCISE_ID,-1);
+			long routineId = data.getLongExtra(EXTRA_ROUTINE_ID, -1);
+			RoutineExerciseCatalog.get(this).insertRoutineExercise(routineId, exerciseId);
 		}
 	}
 	
