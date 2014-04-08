@@ -14,6 +14,8 @@ public class RoutineActivity extends SingleFragmentActivity
 	
 	public static final String EXTRA_ROUTINE_ID =
 			"com.zachlowe.android.fitnessplanner.routine_id";
+	public static final String EXTRA_EXERCISE_ID =
+			"com.zachlowe.android.fitnessplanner.exercise_id";
 	public static final String EXTRA_ADD_EXERCISE =
 			"com.zachlowe.android.fitnessplanner.add_exercise";
 	private static final int REQUEST_EXERCISE = 1;
@@ -23,11 +25,13 @@ public class RoutineActivity extends SingleFragmentActivity
 		return RoutineDetailFragment.newInstance( getIntent().getLongExtra(EXTRA_ROUTINE_ID, -1) );
 	}
 	
+	// Change layout to support two fragments
 	@Override
 	protected int getLayoutResId() {
 		return R.layout.activity_twopane;
 	}
 	
+	// Add list of RoutineExercises to bottom fragment holder
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,7 +44,10 @@ public class RoutineActivity extends SingleFragmentActivity
 	}
 	
 	public void onRoutineExerciseSelected(RoutineExercise routineExercise) {
-		
+		Intent i = new Intent(this, RoutineExerciseActivity.class);
+		i.putExtra(EXTRA_ROUTINE_ID, routineExercise.getRoutineId());
+		i.putExtra(EXTRA_EXERCISE_ID, routineExercise.getId());
+		startActivity(i);
 	}
 
 	public void onAddExerciseSelected(long routineId) {
@@ -68,5 +75,4 @@ public class RoutineActivity extends SingleFragmentActivity
 		
 	}
 	
-
 }

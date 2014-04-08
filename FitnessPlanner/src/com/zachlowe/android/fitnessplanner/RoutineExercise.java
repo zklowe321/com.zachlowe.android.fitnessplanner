@@ -2,15 +2,15 @@ package com.zachlowe.android.fitnessplanner;
 
 public class RoutineExercise extends Exercise {
 
-	private float mREId;
+	//private float mREId;
 	private int mSets;
 	private int mReps;
 	private long mRoutineId;
 	
-	public RoutineExercise(long routineId, long exerciseId) {
+	public RoutineExercise(long exerciseId, long routineId) {
 		super();
 		setId(exerciseId);
-		mREId = -1;
+		//mREId = -1;
 		mSets = 0;
 		mReps = 0;
 		mRoutineId = routineId;
@@ -40,6 +40,7 @@ public class RoutineExercise extends Exercise {
 		mRoutineId = routineId;
 	}
 
+	/**
 	public float getREId() {
 		return mREId;
 	}
@@ -47,4 +48,5 @@ public class RoutineExercise extends Exercise {
 	public void setREId(float rEId) {
 		mREId = rEId;
 	}
+	*/
 }

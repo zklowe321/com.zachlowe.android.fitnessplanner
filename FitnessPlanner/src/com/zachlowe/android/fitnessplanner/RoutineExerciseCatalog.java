@@ -26,15 +26,11 @@ public class RoutineExerciseCatalog {
 	}
 	
 	// Insert a routineExercise into the database
-	public RoutineExercise insertRoutineExercise(long routineId, long exerciseId) {
-		RoutineExercise routineExercise = new RoutineExercise(routineId, exerciseId);
+	public RoutineExercise insertRoutineExercise(long exerciseId, long routineId) {
+		RoutineExercise routineExercise = new RoutineExercise(exerciseId, routineId);
 		
-		routineExercise.setREId(mHelper.insertRoutineExercise(routineExercise));
-		
-		//Exercise exercise = ExerciseCatalog.get(mAppContext).getExercise(exerciseId);
-		
-		//routineExercise.setTitle(exercise.getTitle());
-		//routineExercise.setDescription(exercise.getDescription());
+		//routineExercise.setREId(
+				mHelper.insertRoutineExercise(routineExercise);
 		
 		return routineExercise;
 	}
@@ -52,9 +48,9 @@ public class RoutineExerciseCatalog {
 		mHelper.deleteRoutineExercise(routineExercise);
 	}
 	
-	public RoutineExercise getRoutineExercise(long routineExerciseId) {
+	public RoutineExercise getRoutineExercise(long exerciseId, long routineId) {
 		RoutineExercise routineExercise = null;
-		RoutineExerciseCursor cursor = mHelper.queryRoutineExercise(routineExerciseId);
+		RoutineExerciseCursor cursor = mHelper.queryRoutineExercise(exerciseId, routineId);
 		cursor.moveToFirst();
 		// If you got a row, get a routine
 		if (!cursor.isAfterLast())

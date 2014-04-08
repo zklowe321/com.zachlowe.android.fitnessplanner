@@ -79,7 +79,6 @@ public class ExercisePagerActivity extends FragmentActivity
 	
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		Log.d(TAG, "onLoadFinished called");
 		mCursor = (ExerciseCursor)cursor;
 		
 		FragmentManager fm = getSupportFragmentManager();

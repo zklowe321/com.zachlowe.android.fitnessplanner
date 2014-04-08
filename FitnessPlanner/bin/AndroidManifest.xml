@@ -27,6 +27,8 @@
             android:label="@string/app_name" />
         <activity android:name=".RoutineActivity"
             android:label="@string/app_name" />
+        <activity android:name=".RoutineExerciseActivity"
+            android:label="@string/app_name" />
         <activity android:name=".RoutineListActivity"
             android:label="@string/app_name" />
     </application>

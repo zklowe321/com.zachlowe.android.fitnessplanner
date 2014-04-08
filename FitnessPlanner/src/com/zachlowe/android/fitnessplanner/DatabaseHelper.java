@@ -1,9 +1,5 @@
 package com.zachlowe.android.fitnessplanner;
 
-import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
-import com.zachlowe.android.fitnessplanner.RoutineDatabaseHelper.RoutineCursor;
-import com.zachlowe.android.fitnessplanner.RoutineExerciseDatabaseHelper.RoutineExerciseCursor;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -38,27 +34,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String COLUMN_SETS = "sets";
 	private static final String COLUMN_REPS = "reps";
 	
-	private final String RE_QUERY = "select * from exercise inner join routine_exercise " +
-			"on routine_exercise._id = ?;";
-	private final String RE_QUERY_ALL = 
-			"select * from routine_exercise left join exercise " +
-			"union all " +
-			"select * from exercise left join routine_exercise";
+	private final String RE_QUERY =
+			"select * from routine_exercise inner join exercise " +
+			"on routine_exercise.e_id = ? " +
+			"and routine_exercise.r_id = ?";
+	
 	private final String RE_QUERY_ROUTINE =
-			"select * from (" + RE_QUERY_ALL +
-			") where r_id = ?;";
-	
-	private final String QUERY =
-			"select routine_exercise._id, e_id, r_id, sets, reps, exercise.title, exercise.description " +
-			"from exercise, routine_exercise " +
-			"where r_id = ?;";
-	
-	private final String TEST_Q =
 			"select * from routine_exercise inner join exercise " +
 			"on routine_exercise.e_id = exercise._id " +
 			"and routine_exercise.r_id = ?";
-	
-	
 	
 	public DatabaseHelper(Context context) {
 		super(context, DB_NAME, null, VERSION);
@@ -220,42 +204,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"r_id=? and e_id=?",
 				new String[]{ String.valueOf(r_id), String.valueOf(e_id) });
 	}
-		
-	public RoutineExerciseCursor queryRoutineExercises(long routineId) {
-		//Cursor wrapped = getReadableDatabase().rawQuery(QUERY, new String[]{ String.valueOf(routineId) });
-		Cursor wrapped = getReadableDatabase().rawQuery(TEST_Q, new String[]{ String.valueOf(routineId) });
-		
-		Log.d(TAG, "query routineId = " + routineId);
-			
-		return new RoutineExerciseCursor(wrapped);
-			
-		/**
-		// Equivalent to "select * from routine_exercises order by title"
-		Cursor wrapped = getReadableDatabase().query(TABLE_ROUTINE_EXERCISE,
-				null, null, null, null, null, COLUMN_ROUTINE_ID + " asc");
-		return new RoutineExerciseCursor(wrapped);
-		*/
-	}
-		
-	public RoutineExerciseCursor queryRoutineExercise(long _id) {
-		Cursor wrapped = getReadableDatabase().rawQuery(RE_QUERY, new String[]{ String.valueOf(_id) });
-			
-		return new RoutineExerciseCursor(wrapped);
-	}
-		
-	/**
-	public RoutineExerciseCursor queryRoutineExercise(long _id) {
-		Cursor wrapped = getReadableDatabase().query(TABLE_ROUTINE_EXERCISE,
-				null, // All columns
-				"_id = ?", // Look for a routine and exercise ID
-				new String[]{ String.valueOf(_id) }, // with this value
-				null,	// group by
-				null,	// order by
-				null,	// having
-				"1");	// limit one row
-		return new RoutineExerciseCursor(wrapped);
-	}*/
 	
+	// Get all the RoutineExercises associated with the given routineId
+	public RoutineExerciseCursor queryRoutineExercises(long routineId) {
+		Cursor wrapped = getReadableDatabase().rawQuery(RE_QUERY_ROUTINE, new String[]{ String.valueOf(routineId) });
+			
+		return new RoutineExerciseCursor(wrapped);
+	}
+		
+	public RoutineExerciseCursor queryRoutineExercise(long exerciseId, long routineId) {
+		Cursor wrapped = getReadableDatabase().rawQuery(RE_QUERY, new String[]{ String.valueOf(exerciseId), String.valueOf(routineId) });
+			
+		return new RoutineExerciseCursor(wrapped);
+	}
 	
 	/**
 	 * A convenience class to wrap a cursor that returns rows from the exercise table.
