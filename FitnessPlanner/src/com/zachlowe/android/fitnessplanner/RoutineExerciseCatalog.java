@@ -3,20 +3,19 @@ package com.zachlowe.android.fitnessplanner;
 import android.content.Context;
 import android.util.Log;
 
-import com.zachlowe.android.fitnessplanner.RoutineExerciseDatabaseHelper.RoutineExerciseCursor;
+import com.zachlowe.android.fitnessplanner.DatabaseHelper.RoutineExerciseCursor;
 
 public class RoutineExerciseCatalog {
 	private static final String TAG = "RoutineExerciseCatalog";
 
 	private static RoutineExerciseCatalog sRoutineExerciseCatalog;
 	private Context mAppContext;
-	private RoutineExerciseDatabaseHelper mHelper;
-	private ExerciseDatabaseHelper mExerciseHelper;
+	private DatabaseHelper mHelper;
 	
 	private RoutineExerciseCatalog(Context appContext) {
 		mAppContext = appContext;
-		mHelper = new RoutineExerciseDatabaseHelper(mAppContext);
-		mExerciseHelper = new ExerciseDatabaseHelper(mAppContext);
+		mHelper = new DatabaseHelper(mAppContext);
+
 	}
 	
 	public static RoutineExerciseCatalog get(Context c) {
@@ -32,10 +31,10 @@ public class RoutineExerciseCatalog {
 		
 		routineExercise.setREId(mHelper.insertRoutineExercise(routineExercise));
 		
-		Exercise exercise = ExerciseCatalog.get(mAppContext).getExercise(exerciseId);
+		//Exercise exercise = ExerciseCatalog.get(mAppContext).getExercise(exerciseId);
 		
-		routineExercise.setTitle(exercise.getTitle());
-		routineExercise.setDescription(exercise.getDescription());
+		//routineExercise.setTitle(exercise.getTitle());
+		//routineExercise.setDescription(exercise.getDescription());
 		
 		return routineExercise;
 	}
@@ -45,8 +44,8 @@ public class RoutineExerciseCatalog {
 		return mHelper.updateRoutineExercise(routineExercise);
 	}
 	
-	public RoutineExerciseCursor queryRoutineExercises() {
-		return mHelper.queryRoutineExercises();
+	public RoutineExerciseCursor queryRoutineExercises(long routineId) {
+		return mHelper.queryRoutineExercises(routineId);
 	}
 	
 	public void deleteRoutineExercise(RoutineExercise routineExercise) {

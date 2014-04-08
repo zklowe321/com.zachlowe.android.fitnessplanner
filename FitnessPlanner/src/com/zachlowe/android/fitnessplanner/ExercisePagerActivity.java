@@ -12,7 +12,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
-import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
+import com.zachlowe.android.fitnessplanner.DatabaseHelper.ExerciseCursor;
 
 public class ExercisePagerActivity extends FragmentActivity
 	implements ExerciseFragment.Callbacks, LoaderCallbacks<Cursor> {

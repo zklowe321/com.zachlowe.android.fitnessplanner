@@ -1,22 +1,19 @@
 package com.zachlowe.android.fitnessplanner;
 
-import java.util.ArrayList;
 import android.content.Context;
-import android.content.SharedPreferences;
-import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
+
+import com.zachlowe.android.fitnessplanner.DatabaseHelper.ExerciseCursor;
 
 public class ExerciseCatalog {
 	private static final String TAG = "ExcerciseCatalog";
 	
-	private static final String PREFS_FILE = "exercises";
-	
 	private static ExerciseCatalog sExerciseCatalog;
 	private Context mAppContext;
-	private ExerciseDatabaseHelper mHelper;
+	private DatabaseHelper mHelper;
 	
 	private ExerciseCatalog(Context appContext) {
 		mAppContext = appContext;
-		mHelper = new ExerciseDatabaseHelper(mAppContext);
+		mHelper = new DatabaseHelper(mAppContext);
 	}
 	
 	public static ExerciseCatalog get(Context c) {

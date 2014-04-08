@@ -25,7 +25,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.zachlowe.android.fitnessplanner.RoutineDatabaseHelper.RoutineCursor;
+import com.zachlowe.android.fitnessplanner.DatabaseHelper.RoutineCursor;
 
 public class RoutineListFragment extends ListFragment
 	implements LoaderCallbacks<Cursor>{

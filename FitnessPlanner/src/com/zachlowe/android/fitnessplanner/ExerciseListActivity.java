@@ -24,17 +24,18 @@ public class ExerciseListActivity extends SingleFragmentActivity
 	}
 
 	public void onExerciseSelected(Exercise exercise) {
-		if ( getIntent().getIntExtra(EXTRA_ADD_EXERCISE, -1) != 1 ) {
+		int add = getIntent().getIntExtra(EXTRA_ADD_EXERCISE, -1);
+		if ( add != 1 ) {
 			// Start an instance of ExercisePagerActivity
 			Intent i = new Intent(this, ExercisePagerActivity.class);
 			i.putExtra(EXTRA_EXERCISE_ID, exercise.getId());
 			startActivity(i);
 		} else {
+			long routineId = getIntent().getLongExtra(EXTRA_ROUTINE_ID, -1);
 			// Set result as the exerciseId
 			Intent i = new Intent();
 			i.putExtra(EXTRA_EXERCISE_ID, exercise.getId());
-			i.putExtra(EXTRA_ROUTINE_ID,
-					getIntent().getLongExtra(EXTRA_ROUTINE_ID, -1));
+			i.putExtra(EXTRA_ROUTINE_ID, routineId);
 			setResult(Activity.RESULT_OK, i);
 			finish();
 		}

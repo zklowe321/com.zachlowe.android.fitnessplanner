@@ -27,7 +27,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.zachlowe.android.fitnessplanner.RoutineExerciseDatabaseHelper.RoutineExerciseCursor;
+import com.zachlowe.android.fitnessplanner.DatabaseHelper.RoutineExerciseCursor;
 
 public class RoutineFragment extends ListFragment
 	implements LoaderCallbacks<Cursor> {
@@ -210,8 +210,11 @@ public class RoutineFragment extends ListFragment
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Log.d(TAG, "onCreateLoader called");
+		
+		long routineId = getArguments().getLong(ARG_ROUTINE_ID);
+		
 		// You only ever load the routines, so assume this is the case
-		return new RoutineExerciseCursorLoader(getActivity());
+		return new RoutineExerciseCursorLoader(getActivity(), routineId);
 	}
 	
 	@Override
@@ -231,15 +234,17 @@ public class RoutineFragment extends ListFragment
 	}
 	
 	private static class RoutineExerciseCursorLoader extends SQLiteCursorLoader {
+		private long mRoutineId;
 		
-		public RoutineExerciseCursorLoader(Context context) {
+		public RoutineExerciseCursorLoader(Context context, long routineId) {
 			super(context);
+			mRoutineId = routineId;
 		}
 		
 		@Override
 		protected Cursor loadCursor() {
 			// Query the list of routineExercises
-			return RoutineExerciseCatalog.get(getContext()).queryRoutineExercises();
+			return RoutineExerciseCatalog.get(getContext()).queryRoutineExercises(mRoutineId);
 		}
 	}
 	

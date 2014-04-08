@@ -2,17 +2,17 @@ package com.zachlowe.android.fitnessplanner;
 
 import android.content.Context;
 
-import com.zachlowe.android.fitnessplanner.RoutineDatabaseHelper.RoutineCursor;
+import com.zachlowe.android.fitnessplanner.DatabaseHelper.RoutineCursor;
 
 public class RoutineCatalog {
 
 	private static RoutineCatalog sRoutineCatalog;
 	private Context mAppContext;
-	private RoutineDatabaseHelper mHelper;
+	private DatabaseHelper mHelper;
 	
 	private RoutineCatalog(Context appContext) {
 		mAppContext = appContext;
-		mHelper = new RoutineDatabaseHelper(mAppContext);
+		mHelper = new DatabaseHelper(mAppContext);
 	}
 	
 	public static RoutineCatalog get(Context c) {

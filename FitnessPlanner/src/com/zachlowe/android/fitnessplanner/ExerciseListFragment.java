@@ -25,7 +25,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.zachlowe.android.fitnessplanner.ExerciseDatabaseHelper.ExerciseCursor;
+import com.zachlowe.android.fitnessplanner.DatabaseHelper.ExerciseCursor;
 
 public class ExerciseListFragment extends ListFragment
 		implements LoaderCallbacks<Cursor> {
