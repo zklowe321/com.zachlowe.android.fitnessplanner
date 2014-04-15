@@ -1,3 +1,6 @@
+/**
+ * 	Main screen of the Application. Allows the user to choose which feature they want to use
+ */
 package com.zachlowe.android.fitnessplanner;
 
 import android.annotation.SuppressLint;
@@ -13,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 public class MainFragment extends Fragment {
-	private static final String TAG = "MainFragment";
 	
 	private ImageButton mCalendarImageButton;
 	private ImageButton mExerciseImageButton;

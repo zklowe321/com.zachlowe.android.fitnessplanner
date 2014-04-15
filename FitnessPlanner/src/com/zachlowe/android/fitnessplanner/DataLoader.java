@@ -1,11 +1,12 @@
+/**
+ *	Abstract class that can be subclassed to asynchronously load data from the database
+ */
 package com.zachlowe.android.fitnessplanner;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 public abstract class DataLoader<D> extends AsyncTaskLoader<D> {
-	private static final String TAG = "DataLoader";
 	
 	private D mData;
 	

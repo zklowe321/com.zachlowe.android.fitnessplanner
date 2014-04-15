@@ -1,3 +1,6 @@
+/**
+ *	ListFragment that displays all the exercises in the database
+ */
 package com.zachlowe.android.fitnessplanner;
 
 import android.annotation.TargetApi;
@@ -40,7 +43,6 @@ public class ExerciseListFragment extends ListFragment
 		void onExerciseSelected(Exercise exercise);
 	}
 	
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,7 +50,7 @@ public class ExerciseListFragment extends ListFragment
 		
 		getActivity().setTitle(R.string.exercises_title);
 		
-		// Initialize the loader to load the list of runs
+		// Initialize the loader to load the list of exercises
 		getLoaderManager().initLoader(0, null, this);
 		
 		setRetainInstance(true);
@@ -182,7 +184,7 @@ public class ExerciseListFragment extends ListFragment
 	}
 	
 	public void updateUI() {
-		/** Reset the loader to get any new exercise available */
+		// Reset the loader to get any new exercise available 
 		getLoaderManager().restartLoader(0, null, this);
 	}
 	
@@ -191,14 +193,12 @@ public class ExerciseListFragment extends ListFragment
 	 */
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Log.d(TAG, "onCreateLoader called");
 		// You only ever load the exercises, so assume this is the case
 		return new ExerciseListCursorLoader(getActivity());
 	}
 	
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		Log.d(TAG, "onLoadFinished called");
 		// Create an adapter to point at this cursor
 		ExerciseCursorAdapter adapter =
 				new ExerciseCursorAdapter(getActivity(), (ExerciseCursor)cursor);
@@ -207,7 +207,6 @@ public class ExerciseListFragment extends ListFragment
 	
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.d(TAG, "onLoaderReset called");
 		// Stop using the cursor (via the adapter)
 		setListAdapter(null);
 	}

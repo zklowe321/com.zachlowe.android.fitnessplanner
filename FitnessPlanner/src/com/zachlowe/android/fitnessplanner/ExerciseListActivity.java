@@ -1,8 +1,7 @@
+/**
+ *	Activity to hold listFragment of exercises
+ */
 package com.zachlowe.android.fitnessplanner;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import android.util.Log;
 public class ExerciseListActivity extends SingleFragmentActivity
 	implements ExerciseListFragment.Callbacks, ExerciseFragment.Callbacks {
 	
-	private static final String TAG = "ExerciseListActivity";
 	public static final String EXTRA_EXERCISE_ID =
 			"com.zachlowe.android.fitnessplanner.exercise_id";
 	public static final String EXTRA_ADD_EXERCISE =
@@ -26,13 +24,14 @@ public class ExerciseListActivity extends SingleFragmentActivity
 	protected Fragment createFragment() {
 		return new ExerciseListFragment();
 	}
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-	}
 
+	/**
+	 *	Callback for when an exercise is selected. Two possible actions:
+	 *		1. If an exercise is not being added to a routine, launch the ExercisePagerActivity
+	 *		2. If an exercise is being added to a routine:
+	 *			a. Set result for RoutineActivity
+	 *			b. Finish() to send result to querying activity
+	 */
 	public void onExerciseSelected(Exercise exercise) {
 		int add = getIntent().getIntExtra(EXTRA_ADD_EXERCISE, -1);
 		if ( add != 1 ) {
@@ -47,12 +46,13 @@ public class ExerciseListActivity extends SingleFragmentActivity
 			i.putExtra(EXTRA_EXERCISE_ID, exercise.getId());
 			i.putExtra(EXTRA_ROUTINE_ID, routineId);
 			setResult(Activity.RESULT_OK, i);
-			Log.d(TAG, "Sending exerciseId back: " + exercise.getId());
-			Log.d(TAG, "Sending routineId back: " + routineId);
 			finish();
 		}
 	}
 	
+	/**
+	 *	When called, update the list of Exercises
+	 */
 	public void onExerciseUpdated(Exercise exercise) {
 		ExerciseCatalog.get(this).updateExercise(exercise);
 		

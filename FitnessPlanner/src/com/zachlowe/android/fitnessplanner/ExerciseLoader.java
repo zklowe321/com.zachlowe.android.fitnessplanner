@@ -1,3 +1,6 @@
+/**
+ *	DataLoader subclass used to asynchronously load Exercises from the database
+ */
 package com.zachlowe.android.fitnessplanner;
 
 import android.content.Context;

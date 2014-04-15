@@ -1,3 +1,7 @@
+/**
+ *	FragmentActivity that shows specific ExerciseFragments and lets users
+ *	swipe through them
+ */
 package com.zachlowe.android.fitnessplanner;
 
 import android.content.Context;
@@ -41,39 +45,13 @@ public class ExercisePagerActivity extends FragmentActivity
 	}
 	
 	@Override
-	public void onStop() {
-		super.onStop();
-		Log.d(TAG, "onStop called");
-	}
-	
-	@Override
-	public void onStart() {
-		super.onStart();
-		Log.d(TAG, "onStart called");
-	}
-	
-	@Override
 	public void onResume() {
 		super.onResume();
 		getSupportLoaderManager().restartLoader(0, null, this);
-		Log.d(TAG, "onResume called");
-	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		Log.d(TAG, "onPause called");
-	}
-	
-	@Override
-	public void onRestart() {
-		super.onRestart();
-		Log.d(TAG, "onRestart called");
 	}
 		
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Log.d(TAG, "onCreateLoader called");
 		return new ExercisePagerCursorLoader(this);
 	}
 	
@@ -85,7 +63,6 @@ public class ExercisePagerActivity extends FragmentActivity
 		mViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {
 			@Override
 			public Fragment getItem(int pos) {
-				Log.d(TAG, "getItem() called");
 				updateUI(pos);
 				return ExerciseFragment.newInstance(mCursor.getExercise().getId());
 			}
@@ -99,20 +76,16 @@ public class ExercisePagerActivity extends FragmentActivity
 		mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageSelected(int pos) {
-				Log.d(TAG, "onPageSelected called");
 				updateUI(pos);
 			}
 			
 			@Override
 			public void onPageScrolled(int pos, float posOffset, int posOffsetPixels) {
-				Log.d(TAG, "onPageScrolled called");
 				updateUI(pos);
 			}
 			
 			@Override
-			public void onPageScrollStateChanged(int state) {
-				Log.d(TAG, "onPageScrollStateChanged called");
-			}
+			public void onPageScrollStateChanged(int state) { }
 		});
 		
 		long exerciseId = (long)getIntent()
@@ -135,7 +108,6 @@ public class ExercisePagerActivity extends FragmentActivity
 	
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.d(TAG, "onLoaderReset called");
 		// Do nothing
 	}
 	
@@ -157,7 +129,6 @@ public class ExercisePagerActivity extends FragmentActivity
 		
 		@Override
 		protected Cursor loadCursor() {
-			Log.d(TAG, "loadCursor() called");
 			// Query list of exercises
 			return ExerciseCatalog.get(getContext()).queryExercises();
 		}

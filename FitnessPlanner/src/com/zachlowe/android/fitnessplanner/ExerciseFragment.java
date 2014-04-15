@@ -1,7 +1,9 @@
+/**
+ *	View class to display and edit the information of a given exercise
+ */
 package com.zachlowe.android.fitnessplanner;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +13,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 public class ExerciseFragment extends Fragment {
-	private static final String TAG = "ExerciseFragment";
 	private static final String ARG_EXERCISE_ID = "EXERCISE_ID";
 	private static final int LOAD_EXERCISE = 0;
 	
@@ -34,6 +34,7 @@ public class ExerciseFragment extends Fragment {
 		void onExerciseUpdated(Exercise exercise);
 	}
 	
+	/**		Return a fragment with the correct exerciseId attached	*/
 	public static ExerciseFragment newInstance(long exerciseId) {
 		Bundle args = new Bundle();
 		args.putLong(ARG_EXERCISE_ID, exerciseId);
@@ -48,6 +49,7 @@ public class ExerciseFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
+		// Get the exerciseId and initialize the loader to load data
 		Bundle args = getArguments();
 		if (args != null) {
 			long exerciseId = args.getLong(ARG_EXERCISE_ID, -1);
@@ -59,8 +61,6 @@ public class ExerciseFragment extends Fragment {
 		
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
-		
-		Log.d(TAG, "onCreate called");
 	}
 
 	@TargetApi(11)
@@ -75,6 +75,7 @@ public class ExerciseFragment extends Fragment {
 			}
 		}
 		
+		// Connect the titleField EditText
 		mTitleField = (EditText)v.findViewById(R.id.exercise_title);
 		mTitleField.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -92,6 +93,7 @@ public class ExerciseFragment extends Fragment {
 			}
 		});
 		
+		// Connect the descriptionField EditText
 		mDescriptionField = (EditText)v.findViewById(R.id.exercise_description);
 		mDescriptionField.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -128,17 +130,18 @@ public class ExerciseFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
+		
+		// Update the exercise
 		ExerciseCatalog.get(getActivity()).updateExercise(mExercise);
-		Log.d(TAG, "onPause called");
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 		updateUI();
-		Log.d(TAG, "onResume called");
 	}
 	
+	/**		Get new values from database and put them on screen		*/
 	public void updateUI() {
 		if (mExercise != null) {
 			getActivity().setTitle(mExercise.getTitle());
@@ -147,23 +150,18 @@ public class ExerciseFragment extends Fragment {
 		}
 	}
 	
-	public boolean isEmpty(Exercise exercise) {
-		return (mExercise.getTitle().equals(" ") &&
-				mExercise.getDescription().equals(" "));
-	}
-	
+	/**
+	 *	Private inner class to handle callback events when loading data from the database.
+	 */
 	private class ExerciseLoaderCallbacks implements LoaderCallbacks<Exercise> {
-		private static final String TAG = "ExerciseLoaderCallbacks";
 		
 		@Override
 		public Loader<Exercise> onCreateLoader(int id, Bundle args) {
-			Log.d(TAG, "onCreateLoader called");
 			return new ExerciseLoader(getActivity(), args.getLong(ARG_EXERCISE_ID));
 		}
 		
 		@Override
 		public void onLoadFinished(Loader<Exercise> loader, Exercise exercise) {
-			Log.d(TAG, "onLoadFinished called");
 			mExercise = exercise;
 			updateUI();
 		}

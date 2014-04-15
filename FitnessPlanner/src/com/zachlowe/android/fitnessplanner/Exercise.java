@@ -1,3 +1,6 @@
+/**
+ *	Model class to represent individual exercises
+ */
 package com.zachlowe.android.fitnessplanner;
 
 public class Exercise {
