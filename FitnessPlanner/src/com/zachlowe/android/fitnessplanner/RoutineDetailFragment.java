@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 public class RoutineDetailFragment extends Fragment {
@@ -26,6 +27,7 @@ public class RoutineDetailFragment extends Fragment {
 	private Routine mRoutine;
 	private EditText mTitleField;
 	private EditText mDescriptionField;
+	private Button mSerializeButton;
 	
 	/**
 	 * Required interface for hosting activities
@@ -106,6 +108,22 @@ public class RoutineDetailFragment extends Fragment {
 				mRoutine.setDescription(c.toString());
 			}
 		});
+		
+		mSerializeButton = (Button)v.findViewById(R.id.routine_serialize);
+		mSerializeButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				JSONSerializer json = new JSONSerializer(mRoutine.getId(), getActivity());
+				String str = json.toJSON();
+				if (str == null) {
+					Log.d(TAG, "Unsuccessful");
+				} else {
+					Log.d(TAG, "Successful");
+				}
+			}
+		});
+		
 		updateUI();
 		
 		return v;
