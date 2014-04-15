@@ -66,8 +66,9 @@ public class RoutineActivity extends SingleFragmentActivity
 			long routineId = data.getLongExtra(EXTRA_ROUTINE_ID, -1);
 			
 			Log.d(TAG, "routineId: " + routineId);
+			Log.d(TAG, "exerciseId: " + exerciseId);
 			
-			RoutineExerciseCatalog.get(this).insertRoutineExercise(routineId, exerciseId);
+			RoutineExerciseCatalog.get(this).insertRoutineExercise(exerciseId, routineId);
 		} 
 	}
 	

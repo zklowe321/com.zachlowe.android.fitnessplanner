@@ -176,14 +176,19 @@ public class RoutineFragment extends ListFragment
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		
-		Log.d(TAG, "onListItemClick called");
+		RoutineExerciseCursorAdapter adapter = (RoutineExerciseCursorAdapter)getListAdapter();
+		RoutineExerciseCursor cursor = (RoutineExerciseCursor)adapter.getCursor();
 		
-		RoutineExerciseCursor cursor = (RoutineExerciseCursor)getListView().getItemAtPosition(position);
+		RoutineExercise routineExercise = null;
 		
-		RoutineExercise routineExercise = (RoutineExercise)cursor.getRoutineExercise();
-		
-		// Get the Routine from the adapter
-		//RoutineExercise routineExercise = RoutineExerciseCatalog.get(getActivity()).getRoutineExercise(id);
+		while (!cursor.isAfterLast()) {
+			routineExercise = cursor.getRoutineExercise();
+			if (routineExercise.getId() == id) {
+				break;
+			} else {
+				cursor.moveToNext();
+			}
+		}
 		
 		mCallbacks.onRoutineExerciseSelected(routineExercise);
 	}

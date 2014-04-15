@@ -20,10 +20,5 @@ public class RoutineExerciseActivity extends SingleFragmentActivity {
 		
 		return RoutineExerciseFragment.newInstance(exerciseId, routineId);
 	}
-	
-	public void onRoutineExerciseUpdated(RoutineExercise routineExercise) {
-		//Intent i = new Intent(this, RoutineExerciseActivity.class)
-	}
-	
 
 }

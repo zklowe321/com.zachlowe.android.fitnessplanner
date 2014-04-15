@@ -30,7 +30,7 @@ public class RoutineExerciseCatalog {
 		RoutineExercise routineExercise = new RoutineExercise(exerciseId, routineId);
 		
 		//routineExercise.setREId(
-				mHelper.insertRoutineExercise(routineExercise);
+		mHelper.insertRoutineExercise(routineExercise);
 		
 		return routineExercise;
 	}

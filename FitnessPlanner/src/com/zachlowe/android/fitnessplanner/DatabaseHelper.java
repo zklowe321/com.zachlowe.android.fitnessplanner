@@ -1,7 +1,13 @@
 package com.zachlowe.android.fitnessplanner;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,6 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DB_NAME = "fitnessplanner.sqlite";
 	private static final int VERSION = 1;
+	private Context mContext;
 	
 	/** 	Exercise table constants */
 	private static final String TABLE_EXERCISE = "exercise";
@@ -36,16 +43,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private final String RE_QUERY =
 			"select * from routine_exercise inner join exercise " +
-			"on routine_exercise.e_id = ? " +
+			"on routine_exercise.e_id = exercise._id " +
+			"where routine_exercise.e_id = ? " +
 			"and routine_exercise.r_id = ?";
+	/**
+	private final String RE_QUERY =
+			"select * from routine_exercise inner join exercise " +
+			"on routine_exercise.e_id = exercise._id " +
+			"where routine_exercise.e_id = ? " +
+			"and routine_exercise.r_id = ?";
+	*/
 	
 	private final String RE_QUERY_ROUTINE =
 			"select * from routine_exercise inner join exercise " +
 			"on routine_exercise.e_id = exercise._id " +
-			"and routine_exercise.r_id = ?";
+			"where routine_exercise.r_id = ?";
 	
 	public DatabaseHelper(Context context) {
 		super(context, DB_NAME, null, VERSION);
+		
+		mContext = context;
 	}
 	
 	@Override
@@ -60,8 +77,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 		// Create the 'routine_exercise' table
 		db.execSQL("create table routine_exercise (" +
-			"r_id integer references routine(_id)," +
-				"e_id integer references exercise(_id), sets integer, reps integer)");
+			"e_id integer references exercise(_id), " +
+				"r_id integer references routine(_id), sets integer, reps integer)");
+		
+		readExerciseFile(db);
+	}
+	
+	public void readExerciseFile(SQLiteDatabase db) {
+		try{
+			InputStream is = mContext.getResources().openRawResource(R.raw.exercises);
+			BufferedReader in = new BufferedReader( new InputStreamReader(is));
+			String title = null;
+			String description = null;
+					
+			while( (title = in.readLine()) != null ) {
+				description = in.readLine();
+				
+				ContentValues cv = new ContentValues();
+				cv.put(COLUMN_EXERCISE_TITLE, title);
+				cv.put(COLUMN_EXERCISE_DESCRIPTION, description);
+				
+				db.insert(TABLE_EXERCISE, null, cv);
+
+			}
+			in.close();
+			
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+		}
+		
 	}
 	
 	@Override
@@ -69,6 +113,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	// Insert newly created empty exercise
 	public long insertExercise(Exercise exercise) {
+		if (exercise == null)
+			return -1;
+		
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_EXERCISE_TITLE, COLUMN_PLACEHOLDER);
 		cv.put(COLUMN_EXERCISE_DESCRIPTION, COLUMN_PLACEHOLDER);
@@ -80,6 +127,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	// Update an existing exercise
 	public int updateExercise(Exercise exercise) {
+		if (exercise == null)
+			return -1;
+		
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_EXERCISE_TITLE, exercise.getTitle());
 		cv.put(COLUMN_EXERCISE_DESCRIPTION, exercise.getDescription());
@@ -92,6 +142,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	// Delete an exercise by removing it from the database
 	public int deleteExercise(Exercise exercise) {
+		if (exercise == null)
+			return -1;
+		
 		long id = exercise.getId();
 		return getWritableDatabase().delete(TABLE_EXERCISE, 
 				COLUMN_EXERCISE_ID + " = ?",
@@ -119,6 +172,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	// Insert newly created empty routine
 	public long insertRoutine(Routine routine) {
+		if (routine == null)
+			return -1;
+		
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_ROUTINE_TITLE, COLUMN_PLACEHOLDER);
 		cv.put(COLUMN_ROUTINE_DESCRIPTION, COLUMN_PLACEHOLDER);
@@ -130,6 +186,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 	// Update an existing routine
 	public int updateRoutine(Routine routine) {
+		if (routine == null)
+			return -1;
+		
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_ROUTINE_TITLE, routine.getTitle());
 		cv.put(COLUMN_ROUTINE_DESCRIPTION, routine.getDescription());
@@ -142,6 +201,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 	// Delete a routine by removing it from the database
 	public int deleteRoutine(Routine routine) {
+		if (routine == null)
+			return -1;
+		
 		long id = routine.getId();
 		return getWritableDatabase().delete(TABLE_ROUTINE, 
 				COLUMN_ROUTINE_ID + " = ?",
@@ -169,6 +231,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 	// Insert new entry into routine_exercise database
 	public long insertRoutineExercise(RoutineExercise routineExercise) {
+		if (routineExercise == null)
+			return -1;
+		
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_PARENT_ROUTINE_ID, routineExercise.getRoutineId());
 		cv.put(COLUMN_PARENT_EXERCISE_ID, routineExercise.getId());
@@ -177,15 +242,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			
 		Log.d(TAG, "Inserting new routine exercise into database");
 		Log.d(TAG, "RoutineID = " + routineExercise.getRoutineId());
+		Log.d(TAG, "ExerciseID = " + routineExercise.getId());
 			
 		return getWritableDatabase().insert(TABLE_ROUTINE_EXERCISE, null, cv);
 	}
 		
 	// Update an existing routineExercise
 	public int updateRoutineExercise(RoutineExercise routineExercise) {
+		if (routineExercise == null)
+			return -1;
+		
 		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_PARENT_ROUTINE_ID, routineExercise.getRoutineId());
-		cv.put(COLUMN_PARENT_EXERCISE_ID, routineExercise.getId());
+		//cv.put(COLUMN_PARENT_ROUTINE_ID, routineExercise.getRoutineId());
+		//cv.put(COLUMN_PARENT_EXERCISE_ID, routineExercise.getId());
 		cv.put(COLUMN_SETS, routineExercise.getSets());
 		cv.put(COLUMN_REPS, routineExercise.getReps());
 			
@@ -198,6 +267,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 	// Delete a routineExercise by removing it from the database
 	public int deleteRoutineExercise(RoutineExercise routineExercise) {
+		if (routineExercise == null)
+			return -1;
+		
 		long r_id = routineExercise.getRoutineId();
 		long e_id = routineExercise.getId();
 		return getWritableDatabase().delete(TABLE_ROUTINE_EXERCISE, 
@@ -214,7 +286,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 	public RoutineExerciseCursor queryRoutineExercise(long exerciseId, long routineId) {
 		Cursor wrapped = getReadableDatabase().rawQuery(RE_QUERY, new String[]{ String.valueOf(exerciseId), String.valueOf(routineId) });
-			
+		
+		Log.d(TAG, "count: " + wrapped.getCount());
+		
 		return new RoutineExerciseCursor(wrapped);
 	}
 	
@@ -294,12 +368,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		 * or null if the row is invalid
 		 */
 		public RoutineExercise getRoutineExercise() {
-			if (isBeforeFirst() || isAfterLast())
+			if (isBeforeFirst() || isAfterLast()) {
+				Log.d(TAG, "returning null RoutineExercise");
 				return null;
+			}
+			
+			Log.d(TAG, "getRoutineExercise called");
 			
 			RoutineExercise routineExercise = new RoutineExercise( 
-					getLong(getColumnIndex(COLUMN_PARENT_ROUTINE_ID)), 
-					getLong(getColumnIndex(COLUMN_PARENT_EXERCISE_ID)) );
+					getLong(getColumnIndex(COLUMN_PARENT_EXERCISE_ID)), 
+					getLong(getColumnIndex(COLUMN_PARENT_ROUTINE_ID)) );
 			
 			String title = getString(getColumnIndex(COLUMN_EXERCISE_TITLE));
 			routineExercise.setTitle(title);
@@ -313,9 +391,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			int reps = getInt(getColumnIndex(COLUMN_REPS));
 			routineExercise.setReps(reps);
 			
-			
 			return routineExercise;
 		}
 	}
-
 }

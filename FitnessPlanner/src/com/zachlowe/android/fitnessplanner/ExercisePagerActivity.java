@@ -120,11 +120,15 @@ public class ExercisePagerActivity extends FragmentActivity
 		mCursor.moveToFirst();
 		
 		for (int i = 0; i < mCursor.getCount(); i++) {
-			if (mCursor.getExercise().getId() == exerciseId) {
-				mViewPager.setCurrentItem(i);
-				break;
-			} else {
-				mCursor.moveToNext();
+			try {
+				if (mCursor.getExercise().getId() == exerciseId) {
+					mViewPager.setCurrentItem(i);
+					break;
+				} else {
+					mCursor.moveToNext();
+				}
+			} catch (Exception e) {
+				Log.d(TAG, e.toString());
 			}
 		} 
 	}

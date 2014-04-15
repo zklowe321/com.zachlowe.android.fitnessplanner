@@ -45,8 +45,8 @@ public class ExerciseFragment extends Fragment {
 	}
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		
 		Bundle args = getArguments();
 		if (args != null) {
@@ -140,8 +140,8 @@ public class ExerciseFragment extends Fragment {
 	}
 	
 	public void updateUI() {
-		if (mExercise != null && !isEmpty(mExercise)) {
-			//getActivity().setTitle(mExercise.getTitle());
+		if (mExercise != null) {
+			getActivity().setTitle(mExercise.getTitle());
 			mTitleField.setText(mExercise.getTitle());
 			mDescriptionField.setText(mExercise.getDescription());
 		}
