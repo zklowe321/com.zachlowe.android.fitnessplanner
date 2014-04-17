@@ -55,7 +55,6 @@ public class RoutineExerciseFragment extends Fragment
 			if (routineId != -1 && exerciseId != -1) {
 				LoaderManager lm = getLoaderManager();
 				lm.initLoader(LOAD_ROUTINE_EXERCISE, args, this).forceLoad();
-				Log.d(TAG, "initLoader called");
 			}
 		}
 			
@@ -137,12 +136,8 @@ public class RoutineExerciseFragment extends Fragment
 	@Override
 	public void onPause() {
 		super.onPause();
-		
-		Log.d(TAG, "mId: " + mRoutineExercise.getId());
-		Log.d(TAG, "mRoutineId: " + mRoutineExercise.getRoutineId());
+
 		int result = RoutineExerciseCatalog.get(getActivity()).updateRoutineExercise(mRoutineExercise);
-		
-		Log.d(TAG, "update Result: " + result);
 	}
 	
 	@Override
@@ -160,8 +155,6 @@ public class RoutineExerciseFragment extends Fragment
 					String.valueOf( mRoutineExercise.getSets() ));
 			mRepsField.setText(
 					String.valueOf( mRoutineExercise.getReps() ));
-			
-			Log.d(TAG, "updateUI called. not null");
 		}
 	}
 	
@@ -180,7 +173,6 @@ public class RoutineExerciseFragment extends Fragment
 	
 	@Override
 	public void onLoadFinished(Loader<RoutineExercise> loader, RoutineExercise routineExercise) {
-		Log.d(TAG, "onLoadFinished called");
 		mRoutineExercise = routineExercise;
 		updateUI();
 	}
@@ -189,29 +181,4 @@ public class RoutineExerciseFragment extends Fragment
 	public void onLoaderReset(Loader<RoutineExercise> loader) {
 		// Do nothing
 	}
-	
-	/**
-	private class RoutineExerciseLoaderCallbacks implements LoaderCallbacks<RoutineExercise> {
-		private static final String TAG = "RoutineExerciseLoaderCallbacks";
-		
-		@Override
-		public Loader<RoutineExercise> onCreateLoader(int id, Bundle args) {
-			long routineId = args.getLong(ARG_ROUTINE_ID);
-			long exerciseId = args.getLong(ARG_EXERCISE_ID);
-			
-			return new RoutineExerciseLoader(getActivity(), exerciseId, routineId);
-		}
-		
-		@Override
-		public void onLoadFinished(Loader<RoutineExercise> loader, RoutineExercise routineExercise) {
-			Log.d(TAG, "onLoadFinished called");
-			mRoutineExercise = routineExercise;
-			updateUI();
-		}
-		
-		@Override
-		public void onLoaderReset(Loader<RoutineExercise> loader) {
-			// Do nothing
-		}
-	} */
 }

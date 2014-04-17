@@ -34,7 +34,6 @@ public class RoutineFragment extends ListFragment
 
 	private static final String TAG = "RoutineFragment";
 	private static final String ARG_ROUTINE_ID = "ROUTINE_ID";
-	private static final int REQUEST_EXERCISE = 1;
 	
 	public static final String EXTRA_ADD_EXERCISE =
 			"com.zachlowe.android.fitnessplanner.add_exercise";
@@ -221,8 +220,6 @@ public class RoutineFragment extends ListFragment
 	 */
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Log.d(TAG, "onCreateLoader called");
-		
 		long routineId = getArguments().getLong(ARG_ROUTINE_ID);
 		
 		// You only ever load the routines, so assume this is the case
@@ -231,7 +228,6 @@ public class RoutineFragment extends ListFragment
 	
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		Log.d(TAG, "onLoadFinished called");
 		// Create an adapter to point at this cursor
 		RoutineExerciseCursorAdapter adapter =
 				new RoutineExerciseCursorAdapter(getActivity(), (RoutineExerciseCursor)cursor);
@@ -240,7 +236,6 @@ public class RoutineFragment extends ListFragment
 	
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.d(TAG, "onLoaderReset called");
 		// Stop using the cursor (via the adapter)
 		setListAdapter(null);
 	}

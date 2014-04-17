@@ -1,6 +1,11 @@
 package com.zachlowe.android.fitnessplanner;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -108,22 +113,6 @@ public class RoutineDetailFragment extends Fragment {
 				mRoutine.setDescription(c.toString());
 			}
 		});
-		
-		mSerializeButton = (Button)v.findViewById(R.id.routine_serialize);
-		mSerializeButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				JSONSerializer json = new JSONSerializer(mRoutine.getId(), getActivity());
-				String str = json.toJSON();
-				if (str == null) {
-					Log.d(TAG, "Unsuccessful");
-				} else {
-					Log.d(TAG, "Successful");
-				}
-			}
-		});
-		
 		updateUI();
 		
 		return v;
@@ -146,14 +135,12 @@ public class RoutineDetailFragment extends Fragment {
 	public void onPause() {
 		super.onPause();
 		RoutineCatalog.get(getActivity()).updateRoutine(mRoutine);
-		Log.d(TAG, "onPause called");
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 		updateUI();
-		Log.d(TAG, "onResume called");
 	}
 	
 	public void updateUI() {
@@ -170,17 +157,14 @@ public class RoutineDetailFragment extends Fragment {
 	}
 	
 	private class RoutineLoaderCallbacks implements LoaderCallbacks<Routine> {
-		private static final String TAG = "RoutineLoaderCallbacks";
 		
 		@Override
 		public Loader<Routine> onCreateLoader(int id, Bundle args) {
-			Log.d(TAG, "onCreateLoader called");
 			return new RoutineLoader(getActivity(), args.getLong(ARG_ROUTINE_ID));
 		}
 		
 		@Override
 		public void onLoadFinished(Loader<Routine> loader, Routine routine) {
-			Log.d(TAG, "onLoadFinished called");
 			mRoutine = routine;
 			updateUI();
 		}

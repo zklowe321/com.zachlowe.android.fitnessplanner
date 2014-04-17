@@ -191,14 +191,12 @@ private static final String TAG = "RoutineListFragment";
 	 */
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Log.d(TAG, "onCreateLoader called");
 		// You only ever load the routines, so assume this is the case
 		return new RoutineListCursorLoader(getActivity());
 	}
 	
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		Log.d(TAG, "onLoadFinished called");
 		// Create an adapter to point at this cursor
 		RoutineCursorAdapter adapter =
 				new RoutineCursorAdapter(getActivity(), (RoutineCursor)cursor);
@@ -207,7 +205,6 @@ private static final String TAG = "RoutineListFragment";
 	
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.d(TAG, "onLoaderReset called");
 		// Stop using the cursor (via the adapter)
 		setListAdapter(null);
 	}

@@ -29,7 +29,6 @@ public class RoutineExerciseCatalog {
 	public RoutineExercise insertRoutineExercise(long exerciseId, long routineId) {
 		RoutineExercise routineExercise = new RoutineExercise(exerciseId, routineId);
 		
-		//routineExercise.setREId(
 		mHelper.insertRoutineExercise(routineExercise);
 		
 		return routineExercise;
@@ -58,5 +57,4 @@ public class RoutineExerciseCatalog {
 		cursor.close();
 		return routineExercise;
 	}
-	
 }

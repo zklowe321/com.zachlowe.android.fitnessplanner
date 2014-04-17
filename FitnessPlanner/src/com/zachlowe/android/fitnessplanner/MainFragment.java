@@ -16,11 +16,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 public class MainFragment extends Fragment {
+	public static final String EXTRA_SHARE_ROUTINE =
+			"com.zachlowe.android.fitnessplanner.share_routine";
 	
 	private ImageButton mCalendarImageButton;
 	private ImageButton mExerciseImageButton;
 	private ImageButton mRoutineImageButton;
-	private ImageButton mRunningImageButton;
+	private ImageButton mShareImageButton;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -69,12 +71,13 @@ public class MainFragment extends Fragment {
 			}
 		});
 		
-		mRunningImageButton = (ImageButton)v.findViewById(R.id.fragment_main_running_ImageButton);
-		mRunningImageButton.setOnClickListener(new View.OnClickListener() {
+		mShareImageButton = (ImageButton)v.findViewById(R.id.fragment_main_share_ImageButton);
+		mShareImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Intent i = new Intent(getActivity(), RunningActivity.class);
-				// startActivity(i);
+				Intent i = new Intent(getActivity(), RoutineListActivity.class);
+				i.putExtra(EXTRA_SHARE_ROUTINE, 1);
+				startActivity(i);
 			}
 		});
 		

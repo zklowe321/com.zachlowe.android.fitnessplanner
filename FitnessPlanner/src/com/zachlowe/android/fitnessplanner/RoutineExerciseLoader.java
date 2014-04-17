@@ -3,8 +3,6 @@ package com.zachlowe.android.fitnessplanner;
 import android.content.Context;
 
 public class RoutineExerciseLoader extends DataLoader<RoutineExercise> {
-	private static final String TAG = "RoutineExerciseLoader";
-
 	private long mRoutineId;
 	private long mExerciseId;
 	
