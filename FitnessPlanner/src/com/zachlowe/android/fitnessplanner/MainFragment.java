@@ -5,19 +5,29 @@ package com.zachlowe.android.fitnessplanner;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class MainFragment extends Fragment {
-	public static final String EXTRA_SHARE_ROUTINE =
-			"com.zachlowe.android.fitnessplanner.share_routine";
+	private static final String TAG = "MainFragment";
+	
+	public static final String EXTRA_PERFORM_ACTION =
+			"com.zachlowe.android.fitnessplanner.perform_action";
+	
+	private static final int REQUEST_SHARE = 1;
+	private static final int REQUEST_CALENDAR = 2;
 	
 	private ImageButton mCalendarImageButton;
 	private ImageButton mExerciseImageButton;
@@ -48,8 +58,9 @@ public class MainFragment extends Fragment {
 		mCalendarImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Intent i = new Intent(getActivity(), CalendarActivity.class);
-				// startActivity(i);
+				Intent i = new Intent(getActivity(), RoutineListActivity.class);
+				i.putExtra(EXTRA_PERFORM_ACTION, REQUEST_CALENDAR);
+				startActivity(i);
 			}
 		});
 		
@@ -76,13 +87,14 @@ public class MainFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(getActivity(), RoutineListActivity.class);
-				i.putExtra(EXTRA_SHARE_ROUTINE, 1);
+				i.putExtra(EXTRA_PERFORM_ACTION, REQUEST_SHARE);
 				startActivity(i);
 			}
 		});
 		
 		return v;
 	}
+	
 }
 
 

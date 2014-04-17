@@ -1,11 +1,16 @@
 package com.zachlowe.android.fitnessplanner;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -30,9 +35,13 @@ import com.zachlowe.android.fitnessplanner.DatabaseHelper.RoutineCursor;
 public class RoutineListFragment extends ListFragment
 	implements LoaderCallbacks<Cursor>{
 
-private static final String TAG = "RoutineListFragment";
+	private static final String TAG = "RoutineListFragment";
+
+	private static final int REQUEST_SHARE = 1;
+	private static final int REQUEST_CALENDAR = 2;
 	
 	private Callbacks mCallbacks;
+	private long mRoutineId;
 	
 	/**
 	 * Required interface for hosting activities
@@ -46,7 +55,16 @@ private static final String TAG = "RoutineListFragment";
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 		
-		getActivity().setTitle(R.string.routines_title);
+		mRoutineId = -1;
+		
+		int mode = getActivity().getIntent().getIntExtra(RoutineListActivity.EXTRA_PERFORM_ACTION, -1);
+		if (mode == REQUEST_SHARE) {
+			getActivity().setTitle("Choose a routine to share");
+		} else if (mode == REQUEST_CALENDAR) {
+			getActivity().setTitle("Choose a routine to schedule");
+		} else {
+			getActivity().setTitle(R.string.routines_title);
+		}
 		
 		// Initialize the loader to load the list of routines
 		getLoaderManager().initLoader(0, null, this);
@@ -157,10 +175,36 @@ private static final String TAG = "RoutineListFragment";
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		// Get the Routine from the adapter
-		Routine routine = RoutineCatalog.get(getActivity()).getRoutine(id);
+		// Check to see if we need to inflate a DatePickerFragment
+		if (getActivity().getIntent().getIntExtra(
+				RoutineListActivity.EXTRA_PERFORM_ACTION, -1) == REQUEST_CALENDAR) {
+			FragmentManager fm = getActivity().getSupportFragmentManager();
+			mRoutineId = id;
+			DatePickerFragment dialog = DatePickerFragment
+					.newInstance(Calendar.getInstance().getTime());
+			dialog.setTargetFragment(this, REQUEST_CALENDAR);
+			dialog.show(fm, "dialog");
+		} else {
+			// Get the routine and return it to the querying activity
+			Routine routine = RoutineCatalog.get(getActivity()).getRoutine(id);
+			mCallbacks.onRoutineSelected(routine);
+		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != Activity.RESULT_OK) return;
 		
-		mCallbacks.onRoutineSelected(routine);
+		if (requestCode == REQUEST_CALENDAR) {
+			Date date = (Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+			getActivity().getIntent().putExtra(RoutineListActivity.EXTRA_DATE, date);
+			
+			Routine routine = RoutineCatalog.get(getActivity()).getRoutine(mRoutineId);
+			
+			mCallbacks.onRoutineSelected(routine);
+		}
+		
+		
 	}
 	
 	@Override

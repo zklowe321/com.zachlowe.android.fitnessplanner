@@ -6,8 +6,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 public abstract class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
-	private static final String TAG = "SQLiteCursorLoader";
-	
 	private Cursor mCursor;
 	
 	public SQLiteCursorLoader(Context context) {
@@ -28,7 +26,6 @@ public abstract class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
 		Cursor oldCursor = mCursor;
 		mCursor = data;
 		if (isStarted()) {
-			Log.d(TAG, "isStarted");
 			super.deliverResult(data);
 		}
 		
