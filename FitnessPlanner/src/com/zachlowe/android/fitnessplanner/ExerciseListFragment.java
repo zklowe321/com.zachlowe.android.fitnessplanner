@@ -250,9 +250,6 @@ public class ExerciseListFragment extends ListFragment
 			TextView titleTextView = 
 				(TextView)view.findViewById(R.id.exercise_list_item_titleTextView);
 			titleTextView.setText(exercise.getTitle());
-			TextView descriptionTextView = 
-					(TextView)view.findViewById(R.id.exercise_list_item_descriptionTextView);
-			descriptionTextView.setText(exercise.getDescription());
 		}
 	}
 }

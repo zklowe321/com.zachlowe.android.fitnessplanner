@@ -74,7 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		// Create the 'routine_exercise' table
 		db.execSQL("create table routine_exercise (" +
 			"e_id integer references exercise(_id), " +
-				"r_id integer references routine(_id), sets integer, reps integer " +
+				"r_id integer references routine(_id), sets integer, reps integer, " +
 				"primary key (e_id, r_id))");
 		
 		// Populate exercise database with exercises from file

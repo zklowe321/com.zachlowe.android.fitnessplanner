@@ -66,7 +66,7 @@ public class Serializer {
 				RoutineExercise routineExercise = routineExerciseCursor.getRoutineExercise();
 				result += routineExercise.getTitle() + "\t Sets: " + routineExercise.getSets()
 						+ "\t Reps: " + routineExercise.getReps() + "\n";
-				result += routineExercise.getDescription() + "\n";
+				result += routineExercise.getDescription() + "\n\n";
 				
 				routineExerciseCursor.moveToNext();
 			}

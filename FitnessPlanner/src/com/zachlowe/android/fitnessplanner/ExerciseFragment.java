@@ -89,7 +89,7 @@ public class ExerciseFragment extends Fragment {
 			public void onTextChanged(CharSequence c, int start, int before,
 					int count) {
 				mExercise.setTitle(c.toString());
-				getActivity().setTitle(mExercise.getTitle());
+				//getActivity().setTitle(mExercise.getTitle());
 			}
 		});
 		
@@ -144,7 +144,7 @@ public class ExerciseFragment extends Fragment {
 	/**		Get new values from database and put them on screen		*/
 	public void updateUI() {
 		if (mExercise != null) {
-			getActivity().setTitle(mExercise.getTitle());
+			//getActivity().setTitle(mExercise.getTitle());
 			mTitleField.setText(mExercise.getTitle());
 			mDescriptionField.setText(mExercise.getDescription());
 		}

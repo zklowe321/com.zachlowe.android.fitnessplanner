@@ -115,7 +115,7 @@ public class ExercisePagerActivity extends FragmentActivity
 		mCursor.moveToPosition(pos);
 		Exercise exercise = mCursor.getExercise();
 		if (exercise.getTitle() != null)
-			setTitle(exercise.getTitle());
+			setTitle(R.string.exercises_title);
 	}
 	
 	/**
